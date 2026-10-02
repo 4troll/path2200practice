@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PATH2200 Test 1 Practice Exam</title>
+  <style>
+:root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --correct-border: #16a34a;
+            --correct-bg: #f0fdf4;
+            --correct-text: #15803d;
+            --wrong-border: #dc2626;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #b91c1c;
+            --partial-border: #d97706;
+            --partial-bg: #fffbeb;
+            --partial-text: #92400e;
+            --border-color: #e2e8f0;
+            --selected-border: #93c5fd;
+            --selected-bg: #eff6ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        /* Sticky Header */
+        header {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            padding: 12px 16px;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-title {
+            min-width: 0;
+        }
+
+        .header-title h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-title p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .score-badge {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Navigation / Filter Bar */
+        .nav-bar {
+            max-width: 800px;
+            margin: 16px auto 0;
+            padding: 0 16px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-bar::-webkit-scrollbar { display: none; }
+
+        .filter-btn,
+        .reset-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .filter-btn:hover,
+        .reset-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        /* Main Container */
+        main {
+            max-width: 800px;
+            margin: 16px auto;
+            padding: 0 16px;
+        }
+
+        /* Question Cards */
+        .q-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .q-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .q-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .q-cat {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .q-text {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            line-height: 1.45;
+        }
+
+        /* Options */
+        .opt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .opt-btn {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .opt-btn:active:not(:disabled) { background-color: #f1f5f9; }
+
+        .opt-prefix {
+            font-weight: 700;
+            margin-right: 8px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .opt-btn.selected {
+            border-color: var(--selected-border);
+            background: var(--selected-bg);
+            color: #1d4ed8;
+        }
+
+        .q-card.answered .opt-btn {
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .q-card.answered .opt-btn.user-correct,
+        .q-card.answered .opt-btn.reveal-correct {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct-text) !important;
+            opacity: 1 !important;
+            font-weight: 600;
+        }
+
+        .q-card.answered .opt-btn.user-wrong {
+            background-color: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+            color: var(--wrong-text) !important;
+            opacity: 1 !important;
+            font-weight: 600;
+        }
+
+        /* PATH2200 Submit */
+        .submit-q-btn {
+            margin-top: 14px;
+            padding: 9px 14px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s ease, transform 0.1s ease;
+        }
+
+        .submit-q-btn:hover:not(:disabled) { opacity: 0.92; }
+        .submit-q-btn:active:not(:disabled) { transform: scale(0.98); }
+        .submit-q-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .feedback-box {
+            display: none;
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .feedback-box.correct {
+            background-color: var(--correct-bg);
+            border-left: 4px solid var(--correct-border);
+            color: var(--correct-text);
+        }
+
+        .feedback-box.incorrect {
+            background-color: var(--wrong-bg);
+            border-left: 4px solid var(--wrong-border);
+            color: var(--wrong-text);
+        }
+
+        .feedback-box.partial {
+            background-color: var(--partial-bg);
+            border-left: 4px solid var(--partial-border);
+            color: var(--partial-text);
+        }
+
+        .feedback-title { font-weight: 700; margin-bottom: 4px; }
+        .explanation { margin-top: 4px; color: inherit; }
+
+        @media (max-width: 640px) {
+            header { padding: 10px 12px; }
+            .header-title h1 { font-size: 1rem; }
+            .header-title p { font-size: 0.7rem; }
+            .score-badge { padding: 5px 10px; font-size: 0.8rem; }
+            .nav-bar { padding: 0 12px; margin-top: 12px; }
+            main { margin-top: 12px; padding: 0 12px; }
+            .q-card { padding: 16px; }
+            .q-text { font-size: 0.95rem; }
+            .opt-btn { font-size: 0.9rem; padding: 11px 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>PATH2200 Test 1 Practice Exam</h1>
+                <p id="header-subtitle">160 Questions • 5 Lectures</p>
+            </div>
+            <div class="score-badge" id="score-counter">
+                Grade: 0%
+            </div>
+        </div>
+    </header>
+
+    <div class="nav-bar" id="navTabs">
+        <button class="filter-btn active" data-lec="all" type="button">All (160)</button>
+        <button class="filter-btn" data-lec="1" type="button">Lec 1: Intro &amp; Adaptation (30)</button>
+        <button class="filter-btn" data-lec="2" type="button">Lec 2: Injury &amp; Cell Death (30)</button>
+        <button class="filter-btn" data-lec="3" type="button">Lec 3: Inflammation (40)</button>
+        <button class="filter-btn" data-lec="4" type="button">Lec 4: Immunity (30)</button>
+        <button class="filter-btn" data-lec="5" type="button">Lec 5: Hypersensitivity &amp; HIV (30)</button>
+        <button class="reset-btn" id="resetBtn" type="button">Reset</button>
+    </div>
+
+    <main id="questionsContainer"></main>
+
+    <script>
+    // QUESTION BANK DATA
+    // ---------------------------------------------------------
+    const questionBank = [
+      // ==========================================
+      // LECTURE 1: Altered Cell Biology & Adaptation (30 Qs)
+      // ==========================================
+      {
+        lec: 1,
+        type: "sata",
+        text: "A 62-year-old male with long-standing uncontrolled hypertension shows left ventricular hypertrophy on echocardiogram. Which statements correctly describe the cellular adaptation occurring in his heart tissue? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "It involves an increase in individual cardiac cell size.", correct: true },
+          { text: "It is driven by increased mechanical stretching and functional workload.", correct: true },
+          { text: "It results in a functional increase in tissue mass rather than cellular edema.", correct: true },
+          { text: "It is characterized by rapid cell division and increased cardiomyocyte numbers.", correct: false },
+          { text: "It represents cellular metaplasia in cardiac tissue.", correct: false }
+        ],
+        explanation: "Hypertrophy is an increase in cell size (not cell number) due to increased functional demand or stretching, resulting in functional organ enlargement."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which of the following are classified as subjective symptoms reported by a patient rather than objective clinical signs? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Nausea", correct: true },
+          { text: "Lower back pain", correct: true },
+          { text: "Dizziness upon standing", correct: true },
+          { text: "Body temperature of 38.8°C", correct: false },
+          { text: "Elevated leukocyte count on blood work", correct: false }
+        ],
+        explanation: "Symptoms are subjective complaints reported by the person with the disease (pain, nausea, dizziness). Signs are objective complaints noted by an observer."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "A bronchial biopsy of a chronic smoker shows replacement of normal ciliated columnar epithelial cells with stratified squamous epithelial cells. Which statements accurately describe this cellular adaptation? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "It is an example of metaplasia.", correct: true },
+          { text: "It involves the reprogramming of undifferentiated stem cells in the tissue.", correct: true },
+          { text: "The primary tissue type remains epithelial.", correct: true },
+          { text: "The change is fully reversible if the irritating stimulus is removed.", correct: true },
+          { text: "It is caused by mature differentiated cells directly mutating into another mature cell type.", correct: false }
+        ],
+        explanation: "Metaplasia is a reversible change in cell type caused by the reprogramming of undifferentiated stem cells due to cytokines/growth factors. Primary tissue type remains the same."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which of the following conditions or stimuli cause cellular atrophy? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Denervation following nerve injury", correct: true },
+          { text: "Chronic ischemia to a tissue", correct: true },
+          { text: "Nutrient starvation", correct: true },
+          { text: "Loss of endocrine/hormonal stimulation", correct: true },
+          { text: "Immobilization of a limb in a cast (disuse)", correct: true }
+        ],
+        explanation: "Atrophy is a decrease in cell size caused by disuse, denervation, ischemia, nutrient starvation, endocrine malfunction, aging, or pressure."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "A 58-year-old male presents with urinary frequency and hesitancy. Diagnosis reveals Benign Prostatic Hyperplasia (BPH). Which features characterize this process? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "An increase in the total number of prostatic cells", correct: true },
+          { text: "Driven by increased hormonal stimulation", correct: true },
+          { text: "Compression of the prostatic urethra", correct: true },
+          { text: "An increase in individual cell size without cell division", correct: false },
+          { text: "Irreversible malignant conversion", correct: false }
+        ],
+        explanation: "Hyperplasia is an increase in cell number driven by increased demand or hormone stimulation. BPH compresses the urethra causing urinary symptoms."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which of the following correctly align with the levels of disease prevention defined in pathophysiology? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Primary prevention involves removing risk factors (e.g., immunizations)", correct: true },
+          { text: "Secondary prevention involves early detection and screening (e.g., colonoscopies)", correct: true },
+          { text: "Tertiary prevention involves reducing complications of established disease (e.g., antibiotic use)", correct: true },
+          { text: "Primary prevention is aimed at surgical resection of symptomatic tumors", correct: false },
+          { text: "Secondary prevention is palliative terminal care", correct: false }
+        ],
+        explanation: "Primary prevention removes risk factors (immunizations); Secondary detects disease early (colonoscopy); Tertiary reduces complications (antibiotics)."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which microscopic features are characteristic of cervical dysplasia? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Increased nuclear size and nuclear-to-cytoplasmic ratio", correct: true },
+          { text: "Hyperchromatic (darker) nuclei", correct: true },
+          { text: "Disorderly and disorganized arrangement of cells", correct: true },
+          { text: "Increased rate of cell division", correct: true },
+          { text: "Complete conversion of epithelial tissue into bone tissue", correct: false }
+        ],
+        explanation: "Dysplasia features enlarged dark (hyperchromatic) nuclei, reduced cytoplasm, disorganized arrangement, and increased cell division."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "According to lecture material, Mesenchymal Stem Cells (MSCs) can differentiate into which of the following lineages? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Osteoblasts / Osteocytes (Bone)", correct: true },
+          { text: "Chondrocytes (Cartilage)", correct: true },
+          { text: "Myoblasts (Muscle)", correct: true },
+          { text: "Fibroblasts (Tendon / Ligament)", correct: true },
+          { text: "Adipocytes (Fat)", correct: true }
+        ],
+        explanation: "MSCs proliferate and differentiate into osteoblasts, chondrocytes, myoblasts, stromal cells, fibroblasts, and adipocytes."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which of the following accurately reflect diagnostic test outcome definitions? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "A true positive correctly identifies a person who has the disease.", correct: true },
+          { text: "A false positive incorrectly indicates disease presence in a healthy person.", correct: true },
+          { text: "A true negative correctly identifies a person without the disease.", correct: true },
+          { text: "A false negative incorrectly indicates no disease in an infected person.", correct: true },
+          { text: "A false positive means the test missed a disease that was present.", correct: false }
+        ],
+        explanation: "True Positive = disease present + test pos; False Positive = disease absent + test pos; True Negative = disease absent + test neg; False Negative = disease present + test neg."
+      },
+      {
+        lec: 1,
+        type: "sata",
+        text: "Which of the following statements regarding dysplasia are true? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Dysplasia is characterized by irregular, dysfunctional, and disorganized cell growth.", correct: true },
+          { text: "Dysplasia frequently occurs in respiratory and digestive mucosa.", correct: true },
+          { text: "Dysplasia is NOT considered a true adaptive process.", correct: true },
+          { text: "Dysplastic changes are still reversible if chronic irritation is removed.", correct: true },
+          { text: "Dysplasia is defined as an increase in cell size without nuclear changes.", correct: false }
+        ],
+        explanation: "Dysplasia is abnormal, disorganized cell growth in mucosal linings, non-adaptive, but still reversible."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "How does the World Health Organization (WHO) define health?",
+        options: [
+          { text: "A state of complete physical, mental, and social well-being and not merely the absence of disease and infirmity", correct: true },
+          { text: "The absence of detectable clinical signs or structural organic lesions", correct: false },
+          { text: "A static equilibrium maintained strictly by hormonal feedback loops", correct: false },
+          { text: "The ability to perform daily physical activities without fatigue", correct: false },
+          { text: "An uninterrupted state of cellular mitosis and tissue proliferation", correct: false }
+        ],
+        explanation: "WHO defines health as 'a state of complete physical, mental, and social well-being and not merely the absence of disease and infirmity'."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which term specifically describes the evolution or development of a disease from the initial etiological agent to its ultimate expression?",
+        options: [
+          { text: "Pathogenesis", correct: true },
+          { text: "Etiology", correct: false },
+          { text: "Morphology", correct: false },
+          { text: "Prognosis", correct: false },
+          { text: "Histology", correct: false }
+        ],
+        explanation: "Pathogenesis is the evolution of the disease from the etiological agent until ultimate expression."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "A 22-year-old worker develops thick calluses on his palms after weeks of manual farm labor. What cellular adaptation has occurred?",
+        options: [
+          { text: "Hyperplasia", correct: true },
+          { text: "Atrophy", correct: false },
+          { text: "Metaplasia", correct: false },
+          { text: "Dysplasia", correct: false },
+          { text: "Anaplasia", correct: false }
+        ],
+        explanation: "Skin calluses are an adaptive response involving epidermal cell multiplication (hyperplasia) due to friction/demand."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "The study of cell and tissue structure specifically using a microscope is referred to as:",
+        options: [
+          { text: "Histology", correct: true },
+          { text: "Gross morphology", correct: false },
+          { text: "Epidemiology", correct: false },
+          { text: "Etiology", correct: false },
+          { text: "Pathogenesis", correct: false }
+        ],
+        explanation: "Histology specifically deals with the cells and tissues of the body using a microscope."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which term refers to the prediction of the probable outcome and recovery course of a disease based on similar clinical cases?",
+        options: [
+          { text: "Prognosis", correct: true },
+          { text: "Diagnosis", correct: false },
+          { text: "Etiology", correct: false },
+          { text: "Sequelae", correct: false },
+          { text: "Syndrome", correct: false }
+        ],
+        explanation: "Prognosis is the prediction of the probable outcome of a disease based on the condition and usual course."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "A patient with gastroesophageal reflux disease (GERD) undergoes esophageal biopsy. Columnar gastric-type epithelium is found replacing normal squamous epithelium. What is this condition called?",
+        options: [
+          { text: "Metaplasia", correct: true },
+          { text: "Hypertrophy", correct: false },
+          { text: "Dysplasia", correct: false },
+          { text: "Atrophy", correct: false },
+          { text: "Anaplasia", correct: false }
+        ],
+        explanation: "GERD causes acid reflux leading to gastric glandular metaplasia (Barrett's esophagus) where squamous epithelium changes to columnar."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which principle describes the dynamic state of balance maintained by the body while adjusting to internal and external environmental changes?",
+        options: [
+          { text: "Homeostasis", correct: true },
+          { text: "Pathogenesis", correct: false },
+          { text: "Differentiation", correct: false },
+          { text: "Allostasis", correct: false },
+          { text: "Metaplasia", correct: false }
+        ],
+        explanation: "Homeostasis is the dynamic steady state maintained by the body while adjusting to changing conditions."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "What is the key difference between cellular differentiation and cellular growth?",
+        options: [
+          { text: "Differentiation involves specialized cell maturation/commitment, whereas growth refers to cell size/number increase", correct: true },
+          { text: "Differentiation is always pathologic, whereas growth is always physiologic", correct: false },
+          { text: "Differentiation decreases cell size, whereas growth increases cell size only", correct: false },
+          { text: "Differentiation occurs only in stem cells after death, whereas growth occurs before birth", correct: false },
+          { text: "There is no difference; both terms describe cell division", correct: false }
+        ],
+        explanation: "Growth refers to proliferation/size increase, whereas differentiation is the acquisition of specialized functions along cell lineages."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "An arm immobilized in a cast for 6 weeks shows reduced muscle circumference. What primary stimulus caused this muscular atrophy?",
+        options: [
+          { text: "Disuse", correct: true },
+          { text: "Denervation", correct: false },
+          { text: "Ischemia", correct: false },
+          { text: "Endocrine failure", correct: false },
+          { text: "Nutrient starvation", correct: false }
+        ],
+        explanation: "Skeletal muscle atrophy following cast immobilization is driven by disuse ('if you don't use it, you lose it')."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which level of prevention is demonstrated by routine childhood immunizations?",
+        options: [
+          { text: "Primary prevention", correct: true },
+          { text: "Secondary prevention", correct: false },
+          { text: "Tertiary prevention", correct: false },
+          { text: "Quaternary prevention", correct: false },
+          { text: "Empiric prevention", correct: false }
+        ],
+        explanation: "Primary prevention removes risk factors before disease occurs, such as immunizations."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "An objective physical observation made directly by an examining clinician is defined as a:",
+        options: [
+          { text: "Sign", correct: true },
+          { text: "Symptom", correct: false },
+          { text: "Sequela", correct: false },
+          { text: "Syndrome", correct: false },
+          { text: "Prognosis", correct: false }
+        ],
+        explanation: "A sign is an objective complaint or finding noted by an observer."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "What term describes a pathologic or traumatic discontinuity of a body organ or tissue?",
+        options: [
+          { text: "Lesion", correct: true },
+          { text: "Etiology", correct: false },
+          { text: "Syndrome", correct: false },
+          { text: "Symptom", correct: false },
+          { text: "Infarkt", correct: false }
+        ],
+        explanation: "A lesion is defined as a pathologic or traumatic discontinuity of a body organ or tissue."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "A patient reports feeling fatigued and mildly unwell shortly before distinct clinical manifestations of an infection appear. This stage is known as the:",
+        options: [
+          { text: "Prodromal period", correct: true },
+          { text: "Latent period", correct: false },
+          { text: "Acute onset", correct: false },
+          { text: "Resolution phase", correct: false },
+          { text: "Convalescent phase", correct: false }
+        ],
+        explanation: "The prodromal period is the early stage featuring vague, preliminary signs/symptoms before full disease manifestation."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Cellular adaptation occurs in response to environmental stresses. What primary cellular mechanism allows cells to adapt?",
+        options: [
+          { text: "Altering gene expression", correct: true },
+          { text: "Lysis of plasma membranes", correct: false },
+          { text: "Permanent nuclear clumping", correct: false },
+          { text: "Exporting all organelles", correct: false },
+          { text: "Immediate apoptosis", correct: false }
+        ],
+        explanation: "Cells adapt to altered environmental stresses by altering their gene expression."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which cellular adaptation involves an increase in cell size driven by increased functional workload or hormone stimulation?",
+        options: [
+          { text: "Hypertrophy", correct: true },
+          { text: "Hyperplasia", correct: false },
+          { text: "Metaplasia", correct: false },
+          { text: "Atrophy", correct: false },
+          { text: "Dysplasia", correct: false }
+        ],
+        explanation: "Hypertrophy is defined as an increase in cell size due to increased workload, stretch, or hormones."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "The study of all factors that cause or contribute to the development of a disease is called:",
+        options: [
+          { text: "Etiology", correct: true },
+          { text: "Pathogenesis", correct: false },
+          { text: "Histology", correct: false },
+          { text: "Epidemiology", correct: false },
+          { text: "Morphology", correct: false }
+        ],
+        explanation: "Etiology is the study of all factors involved in the development of a disease (the cause)."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "Which level of prevention is demonstrated when a patient with active tuberculosis takes prescribed antibiotics to prevent further lung damage?",
+        options: [
+          { text: "Tertiary prevention", correct: true },
+          { text: "Primary prevention", correct: false },
+          { text: "Secondary prevention", correct: false },
+          { text: "Primordial prevention", correct: false },
+          { text: "Prophylactic prevention", correct: false }
+        ],
+        explanation: "Tertiary prevention focuses on reducing complications and managing established clinical disease (e.g., antibiotic therapy)."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "A Pap smear reveals disorganized epithelial cells with varied shapes and enlarged dark nuclei, but the basement membrane is intact. This is reported as:",
+        options: [
+          { text: "Dysplasia", correct: true },
+          { text: "Metaplasia", correct: false },
+          { text: "Hypertrophy", correct: false },
+          { text: "Atrophy", correct: false },
+          { text: "Caseous necrosis", correct: false }
+        ],
+        explanation: "Cervical dysplasia is characterized by disorderly arrangement, hyperchromatic enlarged nuclei, and varied cell sizes/shapes."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "What occurs if an environmental stressor exceeds a cell's capacity to adapt or maintain homeostasis?",
+        options: [
+          { text: "Cell injury", correct: true },
+          { text: "Metaplasia", correct: false },
+          { text: "Hyperplasia", correct: false },
+          { text: "Differentiation", correct: false },
+          { text: "Physiologic hypertrophy", correct: false }
+        ],
+        explanation: "If environmental stress is greater than a cell's ability to maintain homeostasis, cell injury results."
+      },
+      {
+        lec: 1,
+        type: "mcq",
+        text: "A disease or condition that arises from an unknown cause is termed:",
+        options: [
+          { text: "Idiopathic", correct: true },
+          { text: "Iatrogenic", correct: false },
+          { text: "Congenital", correct: false },
+          { text: "Nosocomial", correct: false },
+          { text: "Epidemic", correct: false }
+        ],
+        explanation: "Idiopathic refers to a disease process with an unknown etiology/cause."
+      },
+
+      // ==========================================
+      // LECTURE 2: Cell Injury & Cell Death (30 Qs)
+      // ==========================================
+      {
+        lec: 2,
+        type: "sata",
+        text: "A patient suffers acute arterial occlusion leading to severe hypoxia in lower limb tissue. Which intracellular events occur directly due to sublethal hypoxic injury? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Decreased ATP production due to failure of oxidative phosphorylation", correct: true },
+          { text: "Failure of the Na+/K+ membrane ion pump", correct: true },
+          { text: "Intracellular Na+ influx causing acute cellular swelling (edema)", correct: true },
+          { text: "Efflux of K+ out of the cell", correct: true },
+          { text: "Immediate hyper-activation of aerobic mitochondrial respiration", correct: false }
+        ],
+        explanation: "Hypoxia causes decreased ATP, disabling the Na+/K+ pump. Na+ influx draws water into the cell (swelling) while K+ exits."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which of the following are Reactive Oxygen Species (ROS) or free radicals capable of inducing lipid peroxidation and cell membrane damage? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Hydroxyl radical (OH-)", correct: true },
+          { text: "Superoxide anion (O2-)", correct: true },
+          { text: "Hydrogen peroxide (H2O2)", correct: true },
+          { text: "Peroxynitrite (ONOO-)", correct: true },
+          { text: "Superoxide dismutase (SOD)", correct: false }
+        ],
+        explanation: "ROS include hydroxyl, superoxide, hydrogen peroxide, alkoxyl, peroxyl, singlet oxygen, and peroxynitrite. SOD is an antioxidant enzyme."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which endogenous antioxidant enzymes scavenge reactive oxygen species (ROS) to protect cells from oxidative stress? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Superoxide dismutase (SOD)", correct: true },
+          { text: "Catalase", correct: true },
+          { text: "Peroxidase", correct: true },
+          { text: "Phospholipase A2", correct: false },
+          { text: "Cyclooxygenase", correct: false }
+        ],
+        explanation: "SOD, catalase, and peroxidase are key endogenous scavenger enzymes that neutralize ROS."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which features distinguish apoptosis from necrosis? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Apoptosis affects individual scattered cells rather than large groups of cells.", correct: true },
+          { text: "Apoptosis does NOT trigger an inflammatory response.", correct: true },
+          { text: "Apoptosis involves cell shrinkage, nuclear condensation, and membrane blebbing.", correct: true },
+          { text: "Necrosis involves loss of cell membrane integrity and enzyme release.", correct: true },
+          { text: "Necrosis is always a normal physiological developmental process.", correct: false }
+        ],
+        explanation: "Apoptosis affects single cells, lacks inflammation, involves shrinkage/blebbing. Necrosis involves group cell death, membrane lysis, and inflammation."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "An autopsy reveals renal tissue that underwent coagulative necrosis following arterial infarction. Which statements accurately describe coagulative necrosis? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "It is the most common form of necrosis, typically caused by severe ischemia.", correct: true },
+          { text: "Cellular proteins denature due to pH and ionic alterations.", correct: true },
+          { text: "Lysosomal enzymes are inactivated, preventing immediate cellular digestion.", correct: true },
+          { text: "Basic tissue outline remains firm and preserved initially.", correct: true },
+          { text: "The tissue instantly converts into a liquid purulent fluid.", correct: false }
+        ],
+        explanation: "Coagulative necrosis results from ischemia/hypoxia, causes protein denaturation, deactivates lysosomal enzymes, and preserves firm tissue outline."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which of the following statements regarding caseous necrosis are correct? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "It represents a combination of coagulative and liquefactive necrosis.", correct: true },
+          { text: "The necrotic debris appears soft, crumbly, and whitish-gray (cottage cheese-like).", correct: true },
+          { text: "It is commonly observed in pulmonary lesions caused by Tuberculosis.", correct: true },
+          { text: "Dead cell components are incompletely digested.", correct: true },
+          { text: "It is caused by acute pancreatic lipase action in subcutaneous fat.", correct: false }
+        ],
+        explanation: "Caseous necrosis combines coagulative/liquefactive features, looks like cottage cheese, occurs in chronic TB/fungal infections, with incomplete digestion."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "A patient with acute pancreatitis develops localized fat necrosis in abdominal adipose tissue. Which events occur during fat necrosis? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Pancreatic lipases break down triglycerides into free fatty acids.", correct: true },
+          { text: "Released fatty acids bind with positive ions (such as calcium) at the site.", correct: true },
+          { text: "Saponification produces opaque, white, chalky deposits.", correct: true },
+          { text: "Hydrolytic enzymes liquify dense neural tissue into pus.", correct: false },
+          { text: "Anaerobic Clostridium bacteria generate gas bubbles in muscle.", correct: false }
+        ],
+        explanation: "Fat necrosis occurs in fat tissue (pancreas/breast) where lipases break down fats into fatty acids, binding calcium to form chalky soaps."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which clinical features characterize dry gangrene? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Driven primarily by extensive ischemic coagulative necrosis.", correct: true },
+          { text: "Tissue appears black, shriveled, and dry.", correct: true },
+          { text: "Demonstrates a line of sharp demarcation from viable tissue.", correct: true },
+          { text: "Progression is relatively slow (days to months).", correct: true },
+          { text: "Tissue is cold, swollen with blebs, wet, and foul-smelling from bacterial infection.", correct: false }
+        ],
+        explanation: "Dry gangrene is ischemic coagulative necrosis, slow progression, dark/shriveled, sharply demarcated, usually without primary bacterial infection."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which statements regarding gas gangrene are correct? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "It is caused by infection with anaerobic Clostridium species (e.g., C. perfringens).", correct: true },
+          { text: "Bacteria produce gas bubbles within infected tissue.", correct: true },
+          { text: "Frequently associated with severe trauma or open compound fractures.", correct: true },
+          { text: "Requires urgent treatment including antibiotics and surgical intervention.", correct: true },
+          { text: "It is a benign, localized dry ischemic process requiring no surgery.", correct: false }
+        ],
+        explanation: "Gas gangrene involves anaerobic Clostridium bacteria producing gas in damaged muscle/tissue following trauma, requiring antibiotics and surgery."
+      },
+      {
+        lec: 2,
+        type: "sata",
+        text: "Which intracellular accumulations can build up in sublethally injured cells? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Fatty change (lipids) in hepatocytes", correct: true },
+          { text: "Amyloid protein deposits", correct: true },
+          { text: "Coal dust in pulmonary macrophages", correct: true },
+          { text: "Excessive hemoglobin in RBCs", correct: false },
+          { text: "Histamine granules in skeletal muscle", correct: false }
+        ],
+        explanation: "Sublethally injured cells can accumulate lipids (fatty change in liver/spleen/CNS), amyloid proteins, or exogenous materials like coal dust."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "What is the most common cause of cellular injury in clinical medicine?",
+        options: [
+          { text: "Hypoxia", correct: true },
+          { text: "Free radicals", correct: false },
+          { text: "Ionizing radiation", correct: false },
+          { text: "Nutrient excess", correct: false },
+          { text: "Genetic duplication", correct: false }
+        ],
+        explanation: "Hypoxia (oxygen deprivation) is the most common cause of cellular injury."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Brain cells undergo permanent, irreversible cellular damage after how many minutes of complete oxygen deprivation?",
+        options: [
+          { text: "4 to 6 minutes", correct: true },
+          { text: "15 to 20 minutes", correct: false },
+          { text: "30 seconds", correct: false },
+          { text: "1 to 2 hours", correct: false },
+          { text: "10 to 12 minutes", correct: false }
+        ],
+        explanation: "Brain cells undergo permanent damage after 4-6 minutes of oxygen deprivation."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "During severe hypoxia, a cell switches from aerobic respiration to anaerobic glycolysis. What direct intracellular change results from this shift?",
+        options: [
+          { text: "Decreased intracellular pH due to lactic acid accumulation", correct: true },
+          { text: "Increased cellular ATP levels", correct: false },
+          { text: "Decreased membrane permeability", correct: false },
+          { text: "Immediate hyper-polarization of mitochondria", correct: false },
+          { text: "Alkalinization of the cytoplasm", correct: false }
+        ],
+        explanation: "Anaerobic metabolism produces lactic acid, decreasing intracellular pH, which impairs cellular enzymes."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "What happens to membrane ion pumps when ATP is depleted during sublethal hypoxia?",
+        options: [
+          { text: "Na+/K+ pump fails, causing intracellular Na+ accumulation and cell swelling", correct: true },
+          { text: "Na+/K+ pump accelerates, extruding all sodium", correct: false },
+          { text: "Calcium is actively pumped out of the mitochondria", correct: false },
+          { text: "Potassium floods into the cell against its gradient", correct: false },
+          { text: "Membrane transport permanently stops without cell size changes", correct: false }
+        ],
+        explanation: "ATP drop impairs the Na+/K+ pump, causing intracellular Na+ and water influx (acute swelling)."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Unpaired electrons in reactive oxygen species (ROS) damage cells primarily by initiating which chemical reaction in cell membranes?",
+        options: [
+          { text: "Lipid peroxidation", correct: true },
+          { text: "Protein phosphorylation", correct: false },
+          { text: "Glycogenolysis", correct: false },
+          { text: "Saponification", correct: false },
+          { text: "Amyloidogenesis", correct: false }
+        ],
+        explanation: "Free radicals react non-specifically, damaging DNA, proteins, and causing lipid peroxidation in cell membranes."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "A patient suffers an ischemic stroke. Weeks later, brain imaging shows a fluid-filled cavity at the injury site. What type of necrosis occurred?",
+        options: [
+          { text: "Liquefactive necrosis", correct: true },
+          { text: "Coagulative necrosis", correct: false },
+          { text: "Caseous necrosis", correct: false },
+          { text: "Fat necrosis", correct: false },
+          { text: "Fibrinous necrosis", correct: false }
+        ],
+        explanation: "Liquefactive necrosis occurs in tissue rich in hydrolytic enzymes and low in dense connective tissue, such as brain tissue."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Which tissue is most susceptible to liquefactive necrosis due to its high hydrolytic enzyme content?",
+        options: [
+          { text: "Brain tissue", correct: true },
+          { text: "Myocardium", correct: false },
+          { text: "Skeletal muscle", correct: false },
+          { text: "Renal cortex", correct: false },
+          { text: "Splenic parenchyma", correct: false }
+        ],
+        explanation: "Brain tissue contains large amounts of hydrolytic enzymes that turn dead tissue into a soft liquid mass."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "A pulmonary lesion in a patient with chronic tuberculosis reveals soft, crumbly, whitish-gray cheese-like debris. What type of necrosis is present?",
+        options: [
+          { text: "Caseous necrosis", correct: true },
+          { text: "Coagulative necrosis", correct: false },
+          { text: "Liquefactive necrosis", correct: false },
+          { text: "Fat necrosis", correct: false },
+          { text: "Gangrenous necrosis", correct: false }
+        ],
+        explanation: "Caseous necrosis is characteristic of TB infections, producing soft crumbly cottage cheese-like debris."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Saponification (formation of white, chalky calcium soaps) is a pathognomonic feature of which type of necrosis?",
+        options: [
+          { text: "Fat necrosis", correct: true },
+          { text: "Caseous necrosis", correct: false },
+          { text: "Coagulative necrosis", correct: false },
+          { text: "Liquefactive necrosis", correct: false },
+          { text: "Dry gangrene", correct: false }
+        ],
+        explanation: "Fat necrosis releases lipases that break down fat into fatty acids, combining with positive ions to form calcium soaps."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "An elderly diabetic patient presents with a cold, black, shriveled lower toe with a clear boundary from healthy skin and no bacterial infection. What is this condition?",
+        options: [
+          { text: "Dry gangrene", correct: true },
+          { text: "Wet gangrene", correct: false },
+          { text: "Gas gangrene", correct: false },
+          { text: "Liquefactive necrosis", correct: false },
+          { text: "Caseous necrosis", correct: false }
+        ],
+        explanation: "Dry gangrene is caused by coagulative ischemic necrosis, characterized by dry, shriveled, black tissue sharply demarcated from healthy skin."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Which form of gangrene involves secondary bacterial infection, neutrophil infiltration, rapid spread, swollen foul-smelling tissue, and high mortality?",
+        options: [
+          { text: "Wet gangrene", correct: true },
+          { text: "Dry gangrene", correct: false },
+          { text: "Caseous gangrene", correct: false },
+          { text: "Fibrinous gangrene", correct: false },
+          { text: "Apoptotic gangrene", correct: false }
+        ],
+        explanation: "Wet gangrene is caused by bacterial infection and neutrophil infiltration, leading to cold, swollen, foul-smelling, rapidly spreading tissue necrosis."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Which organism is most commonly responsible for gas gangrene?",
+        options: [
+          { text: "Clostridium species (e.g., C. perfringens)", correct: true },
+          { text: "Staphylococcus aureus", correct: false },
+          { text: "Mycobacterium tuberculosis", correct: false },
+          { text: "Escherichia coli", correct: false },
+          { text: "Candida albicans", correct: false }
+        ],
+        explanation: "Gas gangrene is caused by anaerobic Clostridium bacteria found in soil."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Programmed cell death that occurs in single, individual cells without inducing an inflammatory response is called:",
+        options: [
+          { text: "Apoptosis", correct: true },
+          { text: "Necrosis", correct: false },
+          { text: "Autolysis", correct: false },
+          { text: "Karyolysis", correct: false },
+          { text: "Pyknosis", correct: false }
+        ],
+        explanation: "Apoptosis is programmed cell death occurring in single cells without inflammation."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "During apoptosis, the cell fragments into small membrane-bound pieces that are phagocytosed. These fragments are called:",
+        options: [
+          { text: "Apoptotic bodies", correct: true },
+          { text: "Lysosomes", correct: false },
+          { text: "Phagolysosomes", correct: false },
+          { text: "Blebs of pus", correct: false },
+          { text: "Councilman granulomas", correct: false }
+        ],
+        explanation: "Apoptosis results in cytoplasmic fragmentation and formation of apoptotic bodies."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Which of the following is a normal physiological process mediated by apoptosis?",
+        options: [
+          { text: "Separation of webbed fingers during embryonic gestation", correct: true },
+          { text: "Myocardial cell loss during coronary occlusion", correct: false },
+          { text: "Liquefactive cavity formation after brain stroke", correct: false },
+          { text: "Caseous pulmonary cavity development in TB", correct: false },
+          { text: "Saponification of mesentery in pancreatitis", correct: false }
+        ],
+        explanation: "Physiologic apoptosis includes embryonic remodeling like finger separation and menstrual sloughing."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "A heavy alcohol user develops hepatomegaly. Biopsy reveals lipid accumulation inside hepatocytes. What is this cellular manifestation called?",
+        options: [
+          { text: "Fatty change (steatosis)", correct: true },
+          { text: "Fat necrosis", correct: false },
+          { text: "Amyloidosis", correct: false },
+          { text: "Hyaline degeneration", correct: false },
+          { text: "Glycogenosis", correct: false }
+        ],
+        explanation: "Injured liver cells unable to metabolize fats exhibit intracellular lipid accumulation known as 'fatty change'."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Prolonged exposure to ultraviolet (UV) radiation from sunlight damages skin cells primarily by generating:",
+        options: [
+          { text: "Reactive oxygen species (ROS)", correct: true },
+          { text: "Lysosomal hydrolases", correct: false },
+          { text: "Complement an opsonin opsonins", correct: false },
+          { text: "Bradykinin cascades", correct: false },
+          { text: "Lipase enzymes", correct: false }
+        ],
+        explanation: "UV radiation leads to ROS production, causing acute/chronic tissue damage and skin malignancies."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "What systemic manifestation frequently accompanies extensive tissue necrosis?",
+        options: [
+          { text: "Fever and elevated white blood cell count (leukocytosis)", correct: true },
+          { text: "Marked hypothermia and leukopenia", correct: false },
+          { text: "Selective loss of erythrocyte sedimentation", correct: false },
+          { text: "Sudden drop in body metabolic rate", correct: false },
+          { text: "Immediate suppression of hepatic protein synthesis", correct: false }
+        ],
+        explanation: "Systemic manifestations of necrosis include malaise, fever, increased heart rate, leukocytosis, and anorexia."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "In reversible hypoxic cell injury, what outcome occurs if oxygen supply is restored before cell membrane breakdown?",
+        options: [
+          { text: "Ion pumps recover, cellular swelling resolves, and homeostasis is restored", correct: true },
+          { text: "The cell automatically enters irreversible liquefactive necrosis", correct: false },
+          { text: "The cell undergoes immediate saponification", correct: false },
+          { text: "Nuclear chromatin clumping becomes permanent", correct: false },
+          { text: "Ribosomes permanently detach and disintegrate", correct: false }
+        ],
+        explanation: "Reversible injury reverses once the stressor/hypoxia is removed before point of irreversibility."
+      },
+      {
+        lec: 2,
+        type: "mcq",
+        text: "Which non-enzymatic vitamins act as dietary antioxidants to scavenge free radicals?",
+        options: [
+          { text: "Vitamins C and E", correct: true },
+          { text: "Vitamins B12 and K", correct: false },
+          { text: "Vitamins D1 and D3", correct: false },
+          { text: "Folic acid and Biotin", correct: false },
+          { text: "Niacin and Thiamine", correct: false }
+        ],
+        explanation: "Vitamins C and E serve as natural antioxidant scavengers against free radical damage."
+      },
+
+// ==========================================
+      // LECTURE 3: Inflammation (40 Qs)
+      // ==========================================
+            {
+        lec: 3,
+        type: "sata",
+        text: "A patient has a superficial skin injury. Which features belong to the body's first line of defense (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Intact skin helps prevent microorganisms from entering the body", correct: true },
+          { text: "Mucous membranes trap foreign particles", correct: true },
+          { text: "Tears, saliva, and sweat contain lysozyme", correct: true },
+          { text: "Normal flora occupy space and nutrients that harmful bacteria would otherwise use", correct: true },
+          { text: "Highly specific antibodies with immunologic memory are part of the first line", correct: false }
+        ],
+        explanation: "The first line is an innate barrier system made of intact skin, mucous membranes, secretions containing lysozyme, and normal flora. Antibodies and memory belong to the third line."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements accurately describe the second and third lines of defense (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "The second line includes the acute inflammatory response", correct: true },
+          { text: "The second line is innate and non-specific", correct: true },
+          { text: "The third line is adaptive and acquired", correct: true },
+          { text: "The third line uses antibodies to target specific antigens and has memory", correct: true },
+          { text: "The second line is highly antigen-specific and produces long-term immune memory", correct: false }
+        ],
+        explanation: "The second line is an innate, non-specific acute inflammatory response. The third line is adaptive, specific, systemic, antibody-associated, and capable of memory."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient is diagnosed with pancreatitis. Based on the suffix used in the study guide, what does '-itis' indicate?",
+        options: [
+          { text: "Inflammation", correct: true },
+          { text: "Viral infection", correct: false },
+          { text: "Bacterial infection", correct: false },
+          { text: "Tissue death", correct: false },
+          { text: "Autoimmune disease", correct: false }
+        ],
+        explanation: "The suffix '-itis' indicates inflammation; it does not identify a specific cause."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which enzyme in tears, saliva, and sweat is described as bacteriostatic?",
+        options: [
+          { text: "Lysozyme", correct: true },
+          { text: "Histamine", correct: false },
+          { text: "Bradykinin", correct: false },
+          { text: "Fibrin", correct: false },
+          { text: "Interferon", correct: false }
+        ],
+        explanation: "Lysozyme is a bacteriostatic enzyme found in tears, saliva, and sweat that prevents bacterial growth."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient with acute inflammation develops redness, warmth, swelling, and discomfort around a wound. Which event initiates the local response by mast cells?",
+        options: [
+          { text: "Mast cell degranulation releasing pre-formed mediators", correct: true },
+          { text: "Formation of antibodies by plasma cells", correct: false },
+          { text: "Conversion of macrophages into neutrophils", correct: false },
+          { text: "Immediate formation of a granuloma", correct: false },
+          { text: "Suppression of vascular permeability", correct: false }
+        ],
+        explanation: "Mast cells act as early alarm cells. Their immediate degranulation releases pre-formed inflammatory mediators."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which effects of histamine released during mast cell degranulation are described in the study guide (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Vasodilation that increases local blood flow", correct: true },
+          { text: "Capillary endothelial retraction that increases permeability", correct: true },
+          { text: "Smooth muscle contraction that can constrict airways", correct: true },
+          { text: "Increased mucus production", correct: true },
+          { text: "Direct formation of a fibrin clot", correct: false }
+        ],
+        explanation: "Histamine produces vasodilation, endothelial retraction with increased permeability, smooth muscle contraction, and increased mucus production."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Why is capillary endothelial retraction beneficial during acute inflammation?",
+        options: [
+          { text: "It creates gaps that allow fluid, proteins, and white blood cells to enter damaged tissue", correct: true },
+          { text: "It prevents all fluid from leaving the bloodstream", correct: false },
+          { text: "It immediately destroys bacteria inside the vessel", correct: false },
+          { text: "It stops local blood flow to the injured area", correct: false },
+          { text: "It converts macrophages into plasma cells", correct: false }
+        ],
+        explanation: "Endothelial retraction increases vascular permeability so fluid, proteins, and WBCs can move from blood into injured tissue."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient with a severe allergic reaction develops difficulty breathing. Which histamine effect best explains the airway problem?",
+        options: [
+          { text: "Smooth muscle contraction of the airways", correct: true },
+          { text: "Decreased mucus production", correct: false },
+          { text: "Reduced blood flow to the lungs", correct: false },
+          { text: "Fibrin formation in the bronchi", correct: false },
+          { text: "Suppression of leukocyte movement", correct: false }
+        ],
+        explanation: "Histamine causes smooth muscle contraction; contraction of airway smooth muscle can make breathing difficult during a severe reaction."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which statement best distinguishes mast cell degranulation from mast cell synthesis?",
+        options: [
+          { text: "Degranulation releases pre-formed mediators immediately, whereas synthesis creates new mediators from membrane phospholipids", correct: true },
+          { text: "Degranulation occurs days later, whereas synthesis is immediate", correct: false },
+          { text: "Degranulation produces antibodies, whereas synthesis produces red blood cells", correct: false },
+          { text: "Degranulation only affects clotting, whereas synthesis only affects fever", correct: false },
+          { text: "There is no functional difference between the two processes", correct: false }
+        ],
+        explanation: "Degranulation is the immediate release of stored mediators such as histamine. Synthesis is a slower process using membrane phospholipids to generate new lipid mediators."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements accurately describe mediators synthesized after mast cell activation from membrane phospholipids (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Leukotrienes are synthesized and produce slower, longer-lasting vascular effects than histamine", correct: true },
+          { text: "Prostaglandins are synthesized and directly stimulate sensory nerve endings to produce pain", correct: true },
+          { text: "Platelet-activating factor can activate platelets and promote additional inflammatory mediators", correct: true },
+          { text: "These mediators are produced from membrane phospholipids through arachidonic acid", correct: true },
+          { text: "These mediators are all stored pre-formed in mast cell granules before injury", correct: false }
+        ],
+        explanation: "Mast cells use membrane phospholipids to generate arachidonic acid and synthesize leukotrienes, prostaglandins, and PAF. These are not pre-stored like histamine."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient asks why an injured area hurts during inflammation. Which newly synthesized mediator is highlighted as directly stimulating sensory nerve endings?",
+        options: [
+          { text: "Prostaglandins", correct: true },
+          { text: "Histamine", correct: false },
+          { text: "Lysozyme", correct: false },
+          { text: "Fibrin", correct: false },
+          { text: "Interferons", correct: false }
+        ],
+        explanation: "Prostaglandins are highlighted as directly stimulating sensory nerve endings and contributing to inflammatory pain."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A clinician describes a chemical beacon that attracts a particular white blood cell to damaged tissue. What is this type of mediator called?",
+        options: [
+          { text: "Chemotactic factor", correct: true },
+          { text: "Acute-phase reactant", correct: false },
+          { text: "Exudate", correct: false },
+          { text: "Pyrogen", correct: false },
+          { text: "Granuloma", correct: false }
+        ],
+        explanation: "Chemotactic factors act as chemical signals that attract specific WBCs to the site of injury."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements about the three plasma protein systems are supported by the study guide (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "They circulate as inactive proteins or proenzymes that can become activated after a trigger", correct: true },
+          { text: "The complement system can be activated by antibodies, lectin, or a pathogen's cell wall", correct: true },
+          { text: "The clotting system forms an insoluble fibrin clot that can trap microorganisms", correct: true },
+          { text: "The kinin system produces bradykinin, which contributes to vasodilation, permeability, and pain", correct: true },
+          { text: "All three systems function only after an adaptive antibody response has fully developed", correct: false }
+        ],
+        explanation: "The guide describes plasma proteins as inactive proenzymes that activate in cascades. Complement, clotting, and kinin systems have different but overlapping protective effects."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "What is a proenzyme as described in the study guide?",
+        options: [
+          { text: "An inactive protein or enzyme in the blood that waits for a trigger to become active", correct: true },
+          { text: "A mature red blood cell that promotes clotting", correct: false },
+          { text: "A white blood cell that secretes antibodies", correct: false },
+          { text: "A tissue fluid produced by damaged capillaries", correct: false },
+          { text: "A fully active digestive enzyme stored in lysosomes", correct: false }
+        ],
+        explanation: "Proenzymes are inactive blood proteins that remain ready to participate in a cascade when an activating trigger occurs."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which description best matches the major protective outcomes of the complement system?",
+        options: [
+          { text: "It can enhance phagocytosis, promote inflammatory signaling, and form the membrane attack complex that lyses target cells", correct: true },
+          { text: "It mainly produces antibodies and immunologic memory", correct: false },
+          { text: "It forms only a fibrin clot and stops bleeding", correct: false },
+          { text: "It mainly produces red blood cells during inflammation", correct: false },
+          { text: "It suppresses every inflammatory response to protect tissues from swelling", correct: false }
+        ],
+        explanation: "The guide emphasizes complement activation leading to opsonization/phagocytosis, anaphylatoxin-mediated amplification, and MAC-mediated lysis."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "During a localized infection, what is the major infectious-control benefit of the clotting system?",
+        options: [
+          { text: "It forms a fibrin mesh that traps microorganisms and helps prevent spread", correct: true },
+          { text: "It produces antibodies against the pathogen", correct: false },
+          { text: "It directly activates sensory nerves to create pain", correct: false },
+          { text: "It causes all nearby smooth muscle to relax", correct: false },
+          { text: "It converts neutrophils into macrophages", correct: false }
+        ],
+        explanation: "The clotting system forms a fibrin web that traps microorganisms, limits spread, and also supports hemostasis and later tissue repair."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which substance is the end product emphasized for the kinin system?",
+        options: [
+          { text: "Bradykinin", correct: true },
+          { text: "Fibrin", correct: false },
+          { text: "Lysozyme", correct: false },
+          { text: "Histamine", correct: false },
+          { text: "Interferon", correct: false }
+        ],
+        explanation: "The kinin system produces bradykinin, which sustains inflammation and contributes to pain, vasodilation, and increased permeability."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "A patient has an infected wound. Which events help white blood cells move from blood into tissue and then destroy pathogens (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Margination or pavementing brings WBCs against the endothelial lining", correct: true },
+          { text: "Diapedesis allows WBCs to squeeze through endothelial gaps", correct: true },
+          { text: "Chemotaxis guides WBCs along chemical signals toward the injury", correct: true },
+          { text: "Phagocytosis can end with formation of a phagolysosome and destruction of the pathogen", correct: true },
+          { text: "Antibody secretion by a plasma cell is one of the five steps of phagocytosis", correct: false }
+        ],
+        explanation: "The cellular response includes margination, diapedesis, chemotaxis, and phagocytosis. The phagocytosis sequence culminates in a phagolysosome that destroys the pathogen."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements accurately describe margination (pavementing) during the cellular response (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "White blood cells move toward and adhere to the endothelial lining", correct: true },
+          { text: "It occurs before white blood cells emigrate into surrounding tissue", correct: true },
+          { text: "It is part of the cellular response to acute inflammation", correct: true },
+          { text: "It helps position WBCs so they can later leave the vessel", correct: true },
+          { text: "It refers to mast cells emptying pre-formed histamine from granules", correct: false }
+        ],
+        explanation: "Margination, also called pavementing, is the adherence of WBCs to the endothelial lining before they leave the bloodstream."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "A neutrophil is moving from blood into infected tissue. Which statements describe diapedesis (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "The white blood cell moves through gaps between retracted endothelial cells", correct: true },
+          { text: "The process allows the cell to enter the surrounding tissue", correct: true },
+          { text: "It occurs after endothelial changes increase access to the injured area", correct: true },
+          { text: "It is part of leukocyte emigration from the bloodstream", correct: true },
+          { text: "It means the white blood cell forms antibodies against the pathogen", correct: false }
+        ],
+        explanation: "Diapedesis is the movement of WBCs through retracted endothelial gaps from the bloodstream into surrounding tissue."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which characteristics correctly describe neutrophils during acute inflammation (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "They are the most abundant white blood cells", correct: true },
+          { text: "They arrive early at sites of acute inflammation", correct: true },
+          { text: "They actively phagocytose bacteria", correct: true },
+          { text: "They die relatively quickly, and their remains contribute to pus", correct: true },
+          { text: "They are the long-lived cells that dominate chronic inflammation for months", correct: false }
+        ],
+        explanation: "Neutrophils are abundant, early responders that phagocytose aggressively and have a short lifespan of about 10 hours; their remains contribute to pus."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A wound has been inflamed for several days and a different phagocyte population becomes prominent. Which cells arrive later, survive longer, and secrete cytokines to coordinate the response?",
+        options: [
+          { text: "Monocytes that become macrophages", correct: true },
+          { text: "Neutrophils", correct: false },
+          { text: "Eosinophils", correct: false },
+          { text: "Platelets", correct: false },
+          { text: "Erythrocytes", correct: false }
+        ],
+        explanation: "Monocytes enter tissue and become macrophages. They arrive later, survive longer, and help coordinate the response through cytokine secretion."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient has a parasitic worm infection. Which leukocyte is especially associated with attacking multicellular parasites and helping regulate allergic reactions?",
+        options: [
+          { text: "Eosinophil", correct: true },
+          { text: "Neutrophil", correct: false },
+          { text: "Macrophage", correct: false },
+          { text: "Platelet", correct: false },
+          { text: "Plasma cell", correct: false }
+        ],
+        explanation: "Eosinophils attack multicellular parasites and can help regulate allergic reactions by degrading histamine."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements correctly describe cytokines in the inflammatory response (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Interleukins communicate between white blood cells to activate them or stimulate growth", correct: true },
+          { text: "Interferons help protect against viral infection by warning nearby healthy cells", correct: true },
+          { text: "Interferon signaling can lead healthy cells to produce antiviral proteins and stop dividing", correct: true },
+          { text: "Tumor necrosis factor (TNF) can act as a pyrogen by affecting the hypothalamus", correct: true },
+          { text: "Cytokines are structural proteins whose only function is forming the fibrin clot", correct: false }
+        ],
+        explanation: "The guide presents cytokines as chemical messengers. Interleukins act among WBCs, interferons provide antiviral warnings, and TNF can induce fever and, at high levels, muscle wasting."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient has a viral respiratory infection. Which cytokine released by infected cells warns nearby healthy cells to prepare antiviral defenses?",
+        options: [
+          { text: "Interferon", correct: true },
+          { text: "Tumor necrosis factor", correct: false },
+          { text: "Bradykinin", correct: false },
+          { text: "Prostaglandin", correct: false },
+          { text: "Lysozyme", correct: false }
+        ],
+        explanation: "Virus-infected cells release interferons to warn neighboring cells, which then produce antiviral proteins and limit viral spread."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which cytokine is described as a powerful pyrogen that can reset the hypothalamus and contribute to fever?",
+        options: [
+          { text: "Tumor necrosis factor (TNF)", correct: true },
+          { text: "Interferon", correct: false },
+          { text: "Lysozyme", correct: false },
+          { text: "Fibrin", correct: false },
+          { text: "Histamine", correct: false }
+        ],
+        explanation: "TNF is produced by macrophages and is described as a powerful pyrogen that can reset the hypothalamus."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "A patient develops an inflamed joint after tissue injury. Which statements correctly connect local inflammatory signs with their causes (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Redness is associated with vasodilation and hyperemia", correct: true },
+          { text: "Heat is associated with increased local blood flow", correct: true },
+          { text: "Swelling results from increased vascular permeability and protein-rich fluid leaving vessels", correct: true },
+          { text: "Pain can result from prostaglandins, bradykinin, and pressure from swelling", correct: true },
+          { text: "Impaired function is caused only by antibody production", correct: false }
+        ],
+        explanation: "The cardinal signs arise from vascular changes and mediator effects: hyperemia causes redness/heat, permeability causes edema, and pain comes from mediators plus pressure."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient develops a clear, watery fluid-filled blister after minor friction. Which exudate is most consistent with this presentation?",
+        options: [
+          { text: "Serous exudate", correct: true },
+          { text: "Purulent exudate", correct: false },
+          { text: "Fibrinous exudate", correct: false },
+          { text: "Hemorrhagic exudate", correct: false },
+          { text: "Granulomatous exudate", correct: false }
+        ],
+        explanation: "Serous exudate is watery and associated with mild inflammation, such as fluid in a friction blister."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "An infected wound produces thick yellow-green pus. Which exudate is present?",
+        options: [
+          { text: "Purulent exudate", correct: true },
+          { text: "Serous exudate", correct: false },
+          { text: "Fibrinous exudate", correct: false },
+          { text: "Hemorrhagic exudate", correct: false },
+          { text: "Transcellular exudate", correct: false }
+        ],
+        explanation: "Purulent exudate contains pus, including dead neutrophils, white blood cells, bacterial debris, and is associated with severe bacterial infection."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A localized cavity contains walled-off pus after a severe bacterial infection. What is this collection called?",
+        options: [
+          { text: "Abscess", correct: true },
+          { text: "Granuloma", correct: false },
+          { text: "Rouleaux", correct: false },
+          { text: "Serous blister", correct: false },
+          { text: "Fibrosis", correct: false }
+        ],
+        explanation: "An abscess is a localized, walled-off collection of purulent exudate in a tissue cavity."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which are systemic manifestations described for acute inflammation (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Fever due to pyrogens acting on the hypothalamus", correct: true },
+          { text: "Leukocytosis, meaning increased production of white blood cells", correct: true },
+          { text: "Increased liver production of acute-phase reactants such as fibrinogen", correct: true },
+          { text: "Rouleaux formation can occur as plasma proteins increase", correct: true },
+          { text: "Systemic inflammation always causes a permanent fall in white blood cell production", correct: false }
+        ],
+        explanation: "The study guide lists fever, leukocytosis, increased acute-phase proteins from the liver, and rouleaux formation as systemic manifestations."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "During systemic inflammation, the liver releases more fibrinogen and red blood cells stack together like coins. What is this phenomenon called?",
+        options: [
+          { text: "Rouleaux formation", correct: true },
+          { text: "Diapedesis", correct: false },
+          { text: "Opsonization", correct: false },
+          { text: "Chemotaxis", correct: false },
+          { text: "Degranulation", correct: false }
+        ],
+        explanation: "Rouleaux formation is the stacking of RBCs like coins and is associated with increased plasma proteins such as fibrinogen during inflammation."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements about fever during inflammation are supported by the study guide (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Pyrogens can reset the hypothalamic temperature set point", correct: true },
+          { text: "A mild fever can increase metabolic activity", correct: true },
+          { text: "The liver can withhold iron and zinc, making them less available to bacteria", correct: true },
+          { text: "Fever is presented as a potentially beneficial host response during infection", correct: true },
+          { text: "Fever occurs because the body completely stops producing acute-phase proteins", correct: false }
+        ],
+        explanation: "The guide describes fever as a pyrogen-driven systemic response that can increase metabolism and reduce microbial access to iron and zinc."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient has had ongoing inflammation for more than two weeks. Which cellular pattern is most consistent with chronic inflammation?",
+        options: [
+          { text: "More macrophages and lymphocytes with increasing fibrosis", correct: true },
+          { text: "Only neutrophils with marked acute edema", correct: false },
+          { text: "Only eosinophils with no tissue injury", correct: false },
+          { text: "Only platelets with no immune cells", correct: false },
+          { text: "Complete absence of connective tissue repair", correct: false }
+        ],
+        explanation: "Chronic inflammation is associated with macrophages, lymphocytes, less edema/hyperemia than acute inflammation, ongoing tissue destruction, and fibrosis."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient with a resistant infection develops a granuloma. What is the primary purpose of the granuloma?",
+        options: [
+          { text: "To wall off and encapsulate a threat that macrophages cannot eliminate", correct: true },
+          { text: "To increase blood flow and cause immediate hyperemia", correct: false },
+          { text: "To produce antibodies against every possible antigen", correct: false },
+          { text: "To dissolve all fibrin in the infected area", correct: false },
+          { text: "To prevent macrophages from entering the tissue", correct: false }
+        ],
+        explanation: "Granulomas form when macrophages cannot eliminate a resistant pathogen or digest a foreign body. They wall off the threat to limit its spread."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "Which statements accurately compare acute and chronic inflammation (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Acute inflammation is immediate and is described as lasting about 8-10 days", correct: true },
+          { text: "Acute inflammation is designed to dilute, destroy, or neutralize a harmful agent and prepare tissue for repair", correct: true },
+          { text: "Chronic inflammation lasts longer and can persist for weeks, months, or years", correct: true },
+          { text: "Chronic inflammation has more macrophages, lymphocytes, and fibrosis and generally less edema than acute inflammation", correct: true },
+          { text: "Chronic inflammation is defined by an absence of tissue damage and scarring", correct: false }
+        ],
+        explanation: "The guide contrasts a short, immediate acute response with a prolonged chronic response characterized by macrophages, lymphocytes, tissue destruction, and fibrosis."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A patient with chronic inflammation has an organized wall around a persistent threat. According to the study guide, what may occur in the center of a granuloma?",
+        options: [
+          { text: "Caseous (cheese-like) necrosis", correct: true },
+          { text: "Immediate conversion into normal tissue", correct: false },
+          { text: "Massive serous blister formation", correct: false },
+          { text: "Rouleaux formation", correct: false },
+          { text: "Complete loss of macrophages", correct: false }
+        ],
+        explanation: "The guide notes that the center of a granuloma often undergoes caseous, cheese-like necrosis."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "Which statement best describes the ultimate purpose of the acute inflammatory response?",
+        options: [
+          { text: "To dilute, destroy, or neutralize the harmful agent and prepare tissue for repair", correct: true },
+          { text: "To create permanent scar tissue immediately", correct: false },
+          { text: "To produce antigen-specific memory cells within minutes", correct: false },
+          { text: "To eliminate all blood flow from the injured region", correct: false },
+          { text: "To prevent white blood cells from entering damaged tissue", correct: false }
+        ],
+        explanation: "The guide describes acute inflammation as an immediate response designed to dilute, destroy, or neutralize harmful agents and prepare the tissue for repair."
+      },
+      {
+        lec: 3,
+        type: "sata",
+        text: "A patient is recovering from an acute inflammatory response. Which statements about macrophages and chronic inflammation are accurate (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Macrophages can arise from monocytes that leave the bloodstream", correct: true },
+          { text: "Macrophages can survive longer than neutrophils", correct: true },
+          { text: "Macrophages secrete cytokines that help coordinate the inflammatory response", correct: true },
+          { text: "Macrophages are among the dominant cells in chronic inflammation", correct: true },
+          { text: "Macrophages are the main source of the first-line skin barrier", correct: false }
+        ],
+        explanation: "Monocytes become macrophages in tissue. Macrophages survive longer, coordinate responses through cytokines, and are prominent in chronic inflammation."
+      },
+      {
+        lec: 3,
+        type: "mcq",
+        text: "A student compares neutrophils, macrophages, and eosinophils. Which pairing is correct according to the study guide?",
+        options: [
+          { text: "Neutrophils—rapid bacterial phagocytosis; macrophages—later cleanup and coordination; eosinophils—parasites and allergy regulation", correct: true },
+          { text: "Neutrophils—antibody secretion; macrophages—skin barrier; eosinophils—fibrin clot formation", correct: false },
+          { text: "Neutrophils—long-term memory; macrophages—viral replication; eosinophils—RBC production", correct: false },
+          { text: "Neutrophils—granuloma formation only; macrophages—mucus production only; eosinophils—bone formation", correct: false },
+          { text: "Neutrophils—iron storage; macrophages—fibrin digestion; eosinophils—platelet formation", correct: false }
+        ],
+        explanation: "The study guide assigns distinct roles: neutrophils are fast phagocytic responders, macrophages are later long-lived coordinators, and eosinophils target parasites and help regulate allergic reactions."
+      },
+
+      // ==========================================
+      // LECTURE 4: Immunity (30 Qs)
+      // ==========================================
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which key characteristics distinguish the adaptive immune response from innate defenses? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Antigen specific (recognizes and acts against specific foreign antigens)", correct: true },
+          { text: "Systemic (action is not restricted to initial infection site)", correct: true },
+          { text: "Memory (mounts stronger attack upon re-exposure)", correct: true },
+          { text: "Immediate onset within seconds of injury", correct: false },
+          { text: "Non-specific response to any tissue damage", correct: false }
+        ],
+        explanation: "Adaptive immunity is antigen-specific, systemic, has memory, and is slower to initiate than innate defenses."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which cells serve as key Antigen-Presenting Cells (APCs) in the adaptive immune system? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Dendritic cells", correct: true },
+          { text: "Macrophages", correct: true },
+          { text: "B lymphocytes", correct: true },
+          { text: "Erythrocytes (RBCs)", correct: false },
+          { text: "Platelets", correct: false }
+        ],
+        explanation: "Dendritic cells, macrophages, and B cells are key antigen-presenting cells expressing MHC Class II."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which statements regarding Major Histocompatibility Complex (MHC) antigens are correct? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Class I MHC antigens are found on all nucleated cells (except RBCs).", correct: true },
+          { text: "Class I MHC antigens interact directly with CD8 cytotoxic T cells.", correct: true },
+          { text: "Class II MHC antigens are found on antigen-presenting cells (APCs).", correct: true },
+          { text: "Class II MHC antigens interact directly with CD4 helper T cells.", correct: true },
+          { text: "Class I MHC antigens are exclusively present on mature B cells.", correct: false }
+        ],
+        explanation: "MHC I is on all nucleated cells (interacts with CD8+ T cells). MHC II is on APCs (interacts with CD4+ T cells)."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "An individual with Type A blood requires a transfusion. Which statements correctly reflect the ABO blood group system? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Type A red blood cells express A agglutinogens (antigens) on their surface.", correct: true },
+          { text: "Type A plasma contains anti-B (b) agglutinin antibodies.", correct: true },
+          { text: "Type O red blood cells have no A or B agglutinogens.", correct: true },
+          { text: "Type AB plasma contains NO anti-A or anti-B antibodies.", correct: true },
+          { text: "Type O plasma contains no agglutinin antibodies.", correct: false }
+        ],
+        explanation: "Type A has A antigens, anti-B antibodies. Type O has no antigens, anti-A and anti-B antibodies. Type AB has both antigens, no antibodies."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which statements accurately describe antibody structure? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "The Fab region contains the variable antigen-binding domain.", correct: true },
+          { text: "The Fc region is the constant domain (crystalline fragment).", correct: true },
+          { text: "The Fc region can bind complement proteins.", correct: true },
+          { text: "The Fc region can bind to Fc receptors on macrophages and NK cells.", correct: true },
+          { text: "The Fab region binds to cell membrane complement receptors.", correct: false }
+        ],
+        explanation: "Fab binds specific antigens (variable). Fc is the constant fragment that binds cell membranes, complement, or Fc receptors."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which antibody classes are correctly paired with their primary features? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "IgG – Most abundant in plasma (75-85%), crosses placenta, protects newborns", correct: true },
+          { text: "IgA – Protects mucosal surfaces, found in secretions (saliva, tears, breast milk)", correct: true },
+          { text: "IgM – Pentamer, early primary response, natural ABO blood antibodies", correct: true },
+          { text: "IgE – Binds mast cells/basophils, involved in allergic and parasitic reactions", correct: true },
+          { text: "IgD – Secreted in large amounts into gut lumen", correct: false }
+        ],
+        explanation: "IgG (abundant, crosses placenta), IgA (secretions/mucosa), IgM (early/ABO), IgE (allergies/parasites), IgD (attached to B cells)."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which primary functions are performed by circulating antibodies (immunoglobulins)? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Neutralizing bacterial toxins", correct: true },
+          { text: "Neutralizing viruses to prevent host entry", correct: true },
+          { text: "Opsonization of bacteria for phagocytosis", correct: true },
+          { text: "Activation of the complement cascade", correct: true },
+          { text: "Direct phagocytic digestion of whole microbes", correct: false }
+        ],
+        explanation: "4 main antibody functions: Neutralizing toxins, neutralizing viruses, opsonization, and complement activation."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "How does the secondary immune response differ from the primary immune response? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Secondary response has a shorter latent period (hours to days vs 1-2 weeks).", correct: true },
+          { text: "Secondary response produces significantly higher antibody titres.", correct: true },
+          { text: "Secondary response is driven by pre-existing memory B and T cells.", correct: true },
+          { text: "Secondary response is predominantly IgG rather than IgM.", correct: true },
+          { text: "Secondary response produces lower antibody levels that rapidly disappear.", correct: false }
+        ],
+        explanation: "Secondary response is faster (hours-days), produces higher antibody titres, lasts longer, uses memory cells, and is predominantly IgG."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "What are the primary functions of Helper T cells (CD4+)? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Secrete cytokines that stimulate B cell proliferation and plasma cell differentiation", correct: true },
+          { text: "Activate Cytotoxic T cells (CD8+)", correct: true },
+          { text: "Secrete cytokines that activate macrophages to become phagocytic", correct: true },
+          { text: "Secrete chemotactic agents to recruit WBCs", correct: true },
+          { text: "Directly kill target cells using perforin", correct: false }
+        ],
+        explanation: "CD4+ Helper T cells activate both humoral (B cells) and cell-mediated (Cytotoxic T) immunity and stimulate macrophages/chemotaxis."
+      },
+      {
+        lec: 4,
+        type: "sata",
+        text: "Which statements regarding Natural Killer (NK) cells are accurate? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "NK cells do NOT possess antigen-specific T-cell receptors.", correct: true },
+          { text: "NK cells recognize surface protein changes on virally infected and cancer cells.", correct: true },
+          { text: "NK cells express Fc receptors to perform Antibody-Dependent Cellular Cytotoxicity (ADCC).", correct: true },
+          { text: "NK cells release perforin and enzymes to kill target cells.", correct: true },
+          { text: "NK cells differentiate into antibody-secreting plasma cells.", correct: false }
+        ],
+        explanation: "NK cells lack antigen-specific receptors, target altered surface markers on tumor/viral cells, have Fc receptors for ADCC, and release perforin."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Where do B lymphocytes undergo maturation to become immunocompetent?",
+        options: [
+          { text: "Bone marrow", correct: true },
+          { text: "Thymus", correct: false },
+          { text: "Spleen", correct: false },
+          { text: "Peyer patches", correct: false },
+          { text: "Lymph nodes", correct: false }
+        ],
+        explanation: "B lymphocytes mature (become immunocompetent) in the bone marrow."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Where do T lymphocytes undergo maturation to become immunocompetent?",
+        options: [
+          { text: "Thymus", correct: true },
+          { text: "Bone marrow", correct: false },
+          { text: "Thyroid gland", correct: false },
+          { text: "Tonsils", correct: false },
+          { text: "Spleen", correct: false }
+        ],
+        explanation: "T lymphocytes mature in the thymus."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Small molecules (such as penicillin metabolites) that cannot induce an immune response on their own unless bound to a host carrier protein are called:",
+        options: [
+          { text: "Haptens", correct: true },
+          { text: "Epitopes", correct: false },
+          { text: "Opsonins", correct: false },
+          { text: "Agglutinogens", correct: false },
+          { text: "Pyrogens", correct: false }
+        ],
+        explanation: "Haptens are small molecules with very little immunogenicity alone; binding to host proteins forms neoantigens."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "What term describes the specific portion of an antigen molecule that is recognized and bound by an antibody or lymphocyte receptor?",
+        options: [
+          { text: "Epitope (antigenic determinant)", correct: true },
+          { text: "Hapten", correct: false },
+          { text: "Fc region", correct: false },
+          { text: "Heavy chain", correct: false },
+          { text: "Paratope", correct: false }
+        ],
+        explanation: "An epitope (antigenic determinant) is the specific domain on an antigen bound by antibodies/receptors."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "An Rh-negative mother carries an Rh-positive fetus. What is administered to the mother late in gestation to neutralize Rh antigens and prevent maternal sensitization?",
+        options: [
+          { text: "Rh-immunoglobulin (D-Gam / RhoGAM)", correct: true },
+          { text: "Interleukin-2", correct: false },
+          { text: "Purified IgA antibodies", correct: false },
+          { text: "Tetanus toxoid", correct: false },
+          { text: "Normal saline", correct: false }
+        ],
+        explanation: "D-Gam (RhoGAM) is administered late in gestation to neutralize Rh antigen and prevent sensitization in Rh- mothers."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which cellular organelle is noticeably abundant in plasma cells, reflecting their high rate of antibody synthesis?",
+        options: [
+          { text: "Rough Endoplasmic Reticulum (RER)", correct: true },
+          { text: "Lysosomes", correct: false },
+          { text: "Peroxisomes", correct: false },
+          { text: "Centrioles", correct: false },
+          { text: "Cilia", correct: false }
+        ],
+        explanation: "Plasma cells are specialized antibody factories containing abundant RER for protein synthesis."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "What is the typical lifespan of an active antibody-secreting plasma cell?",
+        options: [
+          { text: "A few days", correct: true },
+          { text: "Several years", correct: false },
+          { text: "10 minutes", correct: false },
+          { text: "Lifetime", correct: false },
+          { text: "6 months", correct: false }
+        ],
+        explanation: "Plasma cells burn out quickly and usually last only a few days."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "An oral diagnostic test for HIV detects anti-HIV antibodies in saliva within 20 minutes. Which antibody class is predominantly present in saliva and mucosal secretions?",
+        options: [
+          { text: "IgA", correct: true },
+          { text: "IgG", correct: false },
+          { text: "IgE", correct: false },
+          { text: "IgD", correct: false },
+          { text: "IgM", correct: false }
+        ],
+        explanation: "IgA is the primary antibody found in mucosal surfaces and secretions (saliva, tears, breast milk)."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which mucosa-associated lymphoid tissue (MALT) is located in the submucosa of the ileum?",
+        options: [
+          { text: "Peyer patches", correct: true },
+          { text: "Palatine tonsils", correct: false },
+          { text: "Pharyngeal adenoids", correct: false },
+          { text: "Bronchus-associated lymphoid tissue", correct: false },
+          { text: "Axillary lymph nodes", correct: false }
+        ],
+        explanation: "Peyer patches are MALT structures located in the ileum of the small intestine."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Approximately how long is the latent period following initial exposure to an antigen during a primary immune response?",
+        options: [
+          { text: "1 to 2 weeks", correct: true },
+          { text: "1 to 2 hours", correct: false },
+          { text: "30 seconds", correct: false },
+          { text: "2 months", correct: false },
+          { text: "24 hours", correct: false }
+        ],
+        explanation: "The primary immune response is slow, requiring 1-2 weeks (latent period) before significant antibody levels are produced."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which T lymphocyte subtype directly kills target cells bearing foreign antigens by releasing perforin and granzymes?",
+        options: [
+          { text: "Cytotoxic T cell (CD8+)", correct: true },
+          { text: "Helper T cell (CD4+)", correct: false },
+          { text: "Regulatory T cell", correct: false },
+          { text: "Memory B cell", correct: false },
+          { text: "Plasma cell", correct: false }
+        ],
+        explanation: "Cytotoxic T cells (CD8+) are the only T cells that directly kill target cells using perforin."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which T lymphocyte subtype helps prevent hypersensitivity and autoimmune diseases by suppressing immune cell activity?",
+        options: [
+          { text: "Regulatory cell (Suppressor T cell)", correct: true },
+          { text: "Cytotoxic T cell", correct: false },
+          { text: "Helper T cell", correct: false },
+          { text: "Natural Killer cell", correct: false },
+          { text: "Dendritic cell", correct: false }
+        ],
+        explanation: "Regulatory (suppressor) T cells suppress lymphocyte activity to prevent hypersensitivity and autoimmunity."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Monoclonal antibodies are engineered to bind to how many specific antigenic epitopes?",
+        options: [
+          { text: "Exactly one single epitope", correct: true },
+          { text: "Multiple diverse epitopes", correct: false },
+          { text: "All bacterial cell wall sugars", correct: false },
+          { text: "Any foreign lipopolysaccharide", correct: false },
+          { text: "Five distinct viral proteins", correct: false }
+        ],
+        explanation: "Monoclonal antibodies target a single specific epitope, whereas polyclonal antibodies target multiple epitopes."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which immunoglobulin class is the only one capable of crossing the human placenta to provide passive immunity to the fetus?",
+        options: [
+          { text: "IgG", correct: true },
+          { text: "IgM", correct: false },
+          { text: "IgA", correct: false },
+          { text: "IgE", correct: false },
+          { text: "IgD", correct: false }
+        ],
+        explanation: "IgG is the most abundant immunoglobulin in plasma and the only class that crosses the placenta."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "When antibodies coat a bacterium to render it susceptible to phagocytosis, this process is termed:",
+        options: [
+          { text: "Opsonization", correct: true },
+          { text: "Neutralization", correct: false },
+          { text: "Agglutination", correct: false },
+          { text: "Lysis", correct: false },
+          { text: "Anaphylaxis", correct: false }
+        ],
+        explanation: "Opsonization renders bacteria susceptible to phagocytosis by coating them with antibodies or an opsonin."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Approximately how many antigen-specific receptors are expressed on the surface of a single immunocompetent lymphocyte?",
+        options: [
+          { text: "10^4 to 10^5 receptors per cell", correct: true },
+          { text: "10 to 20 receptors per cell", correct: false },
+          { text: "10^12 receptors per cell", correct: false },
+          { text: "Exactly 2 receptors per cell", correct: false },
+          { text: "Receptors are only present inside the nucleus", correct: false }
+        ],
+        explanation: "Each immunocompetent lymphocyte possesses 10^4 to 10^5 surface receptors for one specific antigen."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which molecule on cytotoxic T cells interacts specifically with MHC Class I complexes on target cells?",
+        options: [
+          { text: "CD8", correct: true },
+          { text: "CD4", correct: false },
+          { text: "gp120", correct: false },
+          { text: "Fc receptor", correct: false },
+          { text: "an opsonin", correct: false }
+        ],
+        explanation: "CD8 molecules on cytotoxic T cells interact with Class I MHC antigens."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Which blood type is considered the universal recipient because its plasma lacks both anti-A and anti-B agglutinin antibodies?",
+        options: [
+          { text: "Type AB", correct: true },
+          { text: "Type O", correct: false },
+          { text: "Type A", correct: false },
+          { text: "Type B", correct: false },
+          { text: "Type Rh-negative", correct: false }
+        ],
+        explanation: "Type AB plasma contains no anti-A or anti-B antibodies, so it will not react against transfused RBCs."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "What happens to most plasma cells once an acute infection is cleared?",
+        options: [
+          { text: "They die via apoptosis due to short lifespan", correct: true },
+          { text: "They revert into pluripotent stem cells in bone marrow", correct: false },
+          { text: "They transform into cytotoxic T cells", correct: false },
+          { text: "They become macrophages", correct: false },
+          { text: "They migrate into the brain to become glial cells", correct: false }
+        ],
+        explanation: "Plasma cells burn out quickly and die after a few days; memory B cells persist for future infections."
+      },
+      {
+        lec: 4,
+        type: "mcq",
+        text: "Antibody-Dependent Cellular Cytotoxicity (ADCC) occurs when Natural Killer (NK) cells bind to which region of an antibody attached to a target cell?",
+        options: [
+          { text: "Fc constant region", correct: true },
+          { text: "Fab variable region", correct: false },
+          { text: "Light chain epitope", correct: false },
+          { text: "Antigenic binding site", correct: false },
+          { text: "Hapten domain", correct: false }
+        ],
+        explanation: "NK cells possess Fc receptors that bind the Fc portion of antibodies on target cells to trigger ADCC."
+      },
+
+      // ==========================================
+      // LECTURE 5: Hypersensitivity & HIV (30 Qs)
+      // ==========================================
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which statements accurately describe Type I Hypersensitivity reactions? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Mediated by IgE antibodies bound to mast cell Fc receptors.", correct: true },
+          { text: "Requires initial exposure to sensitize mast cells.", correct: true },
+          { text: "Secondary exposure triggers rapid mast cell degranulation within minutes.", correct: true },
+          { text: "Manifestations range from hives and rhinitis to life-threatening anaphylaxis.", correct: true },
+          { text: "Mediated primarily by cytotoxic T cells without antibody involvement.", correct: false }
+        ],
+        explanation: "Type I (IgE-mediated) requires sensitization; re-exposure causes rapid mast cell degranulation, releasing histamine."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which mechanisms can cause cell death or dysfunction in Type II (Tissue-Specific) Hypersensitivity? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Complement-mediated lysis", correct: true },
+          { text: "Macrophage phagocytosis of opsonized cells", correct: true },
+          { text: "Antibody-Dependent Cellular Cytotoxicity (ADCC)", correct: true },
+          { text: "Receptor blockage / alteration causing cellular dysfunction", correct: true },
+          { text: "Deposition of circulating soluble immune complexes in blood vessels", correct: false }
+        ],
+        explanation: "Type II mechanism includes 4 pathways: Complement lysis, Phagocytosis, ADCC, and Receptor dysfunction."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "A patient develops acute post-streptococcal glomerulonephritis. Which features characterize Type III (Immune Complex) Hypersensitivity? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Antigen-antibody complexes form in circulation (not tissue-specific).", correct: true },
+          { text: "Complexes deposit in blood vessel walls or glomeruli.", correct: true },
+          { text: "Complement activation recruits neutrophils to the deposit site.", correct: true },
+          { text: "Neutrophils release lysosomal enzymes causing tissue damage.", correct: true },
+          { text: "Driven by IgE antibodies bound to mucosal mast cells.", correct: false }
+        ],
+        explanation: "Type III forms circulating Ag-Ab complexes that deposit in vessel beds/glomeruli, activating complement and neutrophils."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which statements regarding Type IV (Cell-Mediated) Hypersensitivity are correct? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Mediated by sensitized T lymphocytes (does NOT involve antibodies).", correct: true },
+          { text: "Exhibits a delayed response (peaks in 1 to 3 days).", correct: true },
+          { text: "Cytotoxic T cells directly destroy target cells via perforin.", correct: true },
+          { text: "Helper T cells recruit and activate macrophages via cytokines.", correct: true },
+          { text: "Occurs within 5 minutes of allergen exposure due to histamine release.", correct: false }
+        ],
+        explanation: "Type IV is cell-mediated (T cells), delayed (1-3 days), antibody-free, involving Cytotoxic T cell destruction and Helper T macrophage activation."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "A kidney transplant patient is monitored for organ rejection. Which transplant rejection categories and mechanisms are correctly matched? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Hyperacute rejection – Immediate inflammatory/clotting response caused by pre-existing antibodies.", correct: true },
+          { text: "Acute rejection – Weeks/months later; cell-mediated T cell infiltration against foreign MHC.", correct: true },
+          { text: "Chronic rejection – Months/years later; progressive vascular endothelial damage and vessel occlusion.", correct: true },
+          { text: "Graft-versus-Host Disease – Immunocompetent cells in graft attack immunocompromised host.", correct: true },
+          { text: "Hyperacute rejection – T cell-mediated fibrosis occurring 5 years post-transplant.", correct: false }
+        ],
+        explanation: "Hyperacute (pre-existing antibodies, immediate), Acute (cell-mediated T cells, weeks/months), Chronic (endothelial damage, months/years), GVHD (graft attacks host)."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which findings are associated with Systemic Lupus Erythematosus (SLE)? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "B-cell hyperactivity and anti-nuclear antibodies (ANA)", correct: true },
+          { text: "Marked female predominance (10:1 female ratio)", correct: true },
+          { text: "Malar 'butterfly' rash on cheeks and nose", correct: true },
+          { text: "Immune complex deposition affecting kidneys, joints, heart, and skin", correct: true },
+          { text: "Complete genetic absence of T cell production", correct: false }
+        ],
+        explanation: "SLE is a chronic autoimmune disease (10:1 female) with ANA production, immune complexes affecting multiple organs, and skin rashes."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which warning signs suggest a potential Primary (Congenital) Immunodeficiency in an infant or child? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Eight or more new ear infections within 1 year", correct: true },
+          { text: "Two or more serious sinus infections or pneumonias within 1 year", correct: true },
+          { text: "Persistent thrush in mouth or skin after 1 year of age", correct: true },
+          { text: "Failure of an infant to gain weight or grow normally", correct: true },
+          { text: "Development of mild allergic rhinitis in summer", correct: false }
+        ],
+        explanation: "10 warning signs include >=8 ear infections/yr, >=2 pneumonias/yr, persistent thrush >1yr, failure to thrive, deep abscesses, etc."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which statements regarding Bruton X-Linked Agammaglobulinemia are correct? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Characterized by severe deficiency of mature B cells and antibodies.", correct: true },
+          { text: "T cell numbers and cell-mediated immunity remain fully functional.", correct: true },
+          { text: "Recurrent bacterial sinopulmonary infections, pneumonias, and meningitis occur.", correct: true },
+          { text: "Treated with regular intravenous immunoglobulin (IVIG) and antibiotics.", correct: true },
+          { text: "Caused by complete aplasia of the thymus gland.", correct: false }
+        ],
+        explanation: "Bruton X-linked agammaglobulinemia: B cells fail to mature, antibody levels are low, T cells are normal, leading to recurrent bacterial infections."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "Which structural proteins and enzymes are essential components of the Human Immunodeficiency Virus (HIV)? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Glycoprotein gp120 (binds CD4 host receptor)", correct: true },
+          { text: "Reverse transcriptase (converts viral RNA to DNA)", correct: true },
+          { text: "Integrase (incorporates viral DNA into host genome)", correct: true },
+          { text: "Protease (cleaves viral proteins during assembly)", correct: true },
+          { text: "Cellular collagenase (digests host connective tissue)", correct: false }
+        ],
+        explanation: "HIV retrovirus contains RNA, reverse transcriptase, integrase, protease, gp120, gp41, and viral capsid proteins."
+      },
+      {
+        lec: 5,
+        type: "sata",
+        text: "An AIDS patient has a CD4+ T cell count of 150 cells/uL. Which opportunistic infections or malignancies are common at this stage? (SELECT ALL THAT APPLY)",
+        options: [
+          { text: "Pneumocystis jiroveci pneumonia", correct: true },
+          { text: "Mycobacterium tuberculosis (TB)", correct: true },
+          { text: "Oral/esophageal Candidiasis (thrush)", correct: true },
+          { text: "Kaposi sarcoma (linked to HHV-8)", correct: true },
+          { text: "Acute rheumatic heart valve lesions", correct: false }
+        ],
+        explanation: "AIDS (CD4 < 200) predisposes to opportunistic infections (P. jiroveci, TB, Candida, Cryptosporidium) and malignancies (Kaposi sarcoma, Non-Hodgkin lymphoma)."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "An excessive or inappropriate activation of the immune system leading to host tissue damage is termed:",
+        options: [
+          { text: "Hypersensitivity", correct: true },
+          { text: "Immunodeficiency", correct: false },
+          { text: "Immune tolerance", correct: false },
+          { text: "Anaplasia", correct: false },
+          { text: "Homeostasis", correct: false }
+        ],
+        explanation: "Hypersensitivity is defined as an excessive or inappropriate activation of the immune system causing tissue damage."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Penicillin metabolites bind to RBC cell membranes to form neoantigens, triggering immune destruction and anemia. What antigen source target is this?",
+        options: [
+          { text: "Allergy (allergen hapten binding host cells)", correct: true },
+          { text: "Autoimmunity", correct: false },
+          { text: "Alloimmunity", correct: false },
+          { text: "Congenital immunodeficiency", correct: false },
+          { text: "Monoclonal breakdown", correct: false }
+        ],
+        explanation: "Allergies often involve haptens (like penicillin metabolites) interacting with host cells to form neoantigens."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Why are females significantly more susceptible to developing autoimmune diseases than males?",
+        options: [
+          { text: "Estrogen aids initiation of autoimmunity, whereas androgens may protect", correct: true },
+          { text: "Females lack helper T cells completely", correct: false },
+          { text: "Females possess no Class I MHC antigens", correct: false },
+          { text: "Progesterone destroys circulating IgE antibodies", correct: false },
+          { text: "X-chromosome inactivation prevents antibody production", correct: false }
+        ],
+        explanation: "Autoimmune diseases show strong female ratios (10:1 in SLE); estrogen may aid initiation while androgens may protect."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "A patient exhibits bronchospasm, facial swelling, severe itching, and dropping blood pressure shortly after a wasp sting. What life-threatening reaction is occurring?",
+        options: [
+          { text: "Anaphylaxis (Type I Hypersensitivity)", correct: true },
+          { text: "Arthus reaction (Type III Hypersensitivity)", correct: false },
+          { text: "Contact dermatitis (Type IV Hypersensitivity)", correct: false },
+          { text: "Graft-versus-host reaction", correct: false },
+          { text: "DiGeorge crisis", correct: false }
+        ],
+        explanation: "Anaphylaxis is a severe, life-threatening Type I reaction causing bronchospasm, edema, vasodilation, shock, and potentially death."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Catechols from poison ivy bind to keratin in skin to form neoantigens recognized by Cytotoxic T cells. How long does contact dermatitis take to reach peak intensity?",
+        options: [
+          { text: "1 to 3 days (delayed cell-mediated response)", correct: true },
+          { text: "2 to 5 minutes", correct: false },
+          { text: "12 hours", correct: false },
+          { text: "3 weeks", correct: false },
+          { text: "Immediately during exposure", correct: false }
+        ],
+        explanation: "Poison ivy causes Type IV cell-mediated contact dermatitis, which is delayed and takes 1-3 days to reach maximum intensity."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "A child develops heart valve lesions (mitral valve damage) weeks after a Streptococcal throat infection. What mechanism caused this autoantibody attack?",
+        options: [
+          { text: "Cross-reaction of anti-streptococcal antibodies with proteins on heart valves", correct: true },
+          { text: "Direct viral invasion of cardiac myocytes", correct: false },
+          { text: "IgE mast cell degranulation inside the pericardium", correct: false },
+          { text: "Congenital failure of T cell maturation in thymus", correct: false },
+          { text: "Anaphylatoxin an anaphylatoxin destruction of endothelial cells", correct: false }
+        ],
+        explanation: "Acute Rheumatic Fever results from cross-reaction where antibodies against bacterial capsule also react with heart valves (mitral valve)."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Severe Combined Immunodeficiency (SCID) is caused by a disruption in the development of which cell lineage?",
+        options: [
+          { text: "Lymphoid stem cells (affecting both T and B cells)", correct: true },
+          { text: "Granulocytes only", correct: false },
+          { text: "Platelets and Megakaryocytes", correct: false },
+          { text: "Erythrocytes only", correct: false },
+          { text: "Monocytes only", correct: false }
+        ],
+        explanation: "SCID disrupts lymphocyte stem cell development, causing severe deficiency in both T and B cell responses."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "DiGeorge syndrome results from congenital failure of thymus development, leading primarily to a deficiency in which cells?",
+        options: [
+          { text: "T lymphocytes", correct: true },
+          { text: "B lymphocytes", correct: false },
+          { text: "Neutrophils", correct: false },
+          { text: "Erythrocyte sedimentation rate", correct: false },
+          { text: "Erythrocytes", correct: false }
+        ],
+        explanation: "DiGeorge syndrome is a T-cell deficiency resulting from lack of proper thymus development."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Which type of primary immunodeficiency carries the highest risk of recurrent bacterial infections with S. pneumoniae and S. aureus, but normal defense against intracellular viruses?",
+        options: [
+          { text: "B-cell (humoral) deficiency", correct: true },
+          { text: "T-cell deficiency", correct: false },
+          { text: "SCID", correct: false },
+          { text: "DiGeorge syndrome", correct: false },
+          { text: "Secondary malnutrition", correct: false }
+        ],
+        explanation: "B-cell deficiencies lead to recurrent bacterial infections (S. pneumoniae, S. aureus, H. influenzae) but do not severely impact intracellular viral defense."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Which complement-related outcome is most directly responsible for making a pathogen easier for phagocytes to engulf?",
+        options: [
+          { text: "Opsonization", correct: true },
+          { text: "Fever", correct: false },
+          { text: "Rouleaux formation", correct: false },
+          { text: "Fibrosis", correct: false },
+          { text: "Diapedesis", correct: false }
+        ],
+        explanation: "Complement activation can promote opsonization, tagging a pathogen and increasing its susceptibility to phagocytosis."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Which cause of secondary (acquired) immunodeficiency is considered iatrogenic?",
+        options: [
+          { text: "Immunosuppressive chemotherapy or radiation therapy", correct: true },
+          { text: "Severe protein malnutrition", correct: false },
+          { text: "Genetic mutation in SCID", correct: false },
+          { text: "Aging of the immune system", correct: false },
+          { text: "Congenital thymic aplasia", correct: false }
+        ],
+        explanation: "Iatrogenic causes are medical treatments resulting in immune depression (chemotherapy, radiation, surgery, steroids)."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Why are severe burn victims at an exceptionally high risk for secondary immunodeficiencies and systemic infections?",
+        options: [
+          { text: "Loss of skin barriers, fluid/blood loss, and production of immunosuppressive factors", correct: true },
+          { text: "Immediate destruction of bone marrow stem cells", correct: false },
+          { text: "Genetic deletion of the CD4 gene", correct: false },
+          { text: "Inability to produce histamine", correct: false },
+          { text: "Permanent loss of liver function", correct: false }
+        ],
+        explanation: "Burn victims lose physical skin barriers and connections to tissue, plus produce immunosuppressive factors."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "What primary cell surface receptor does the HIV viral envelope glycoprotein gp120 bind to on human target cells?",
+        options: [
+          { text: "CD4 receptor", correct: true },
+          { text: "CD8 receptor", correct: false },
+          { text: "MHC Class I", correct: false },
+          { text: "Fc receptor", correct: false },
+          { text: "IgE receptor", correct: false }
+        ],
+        explanation: "HIV envelope gp120 binds to host CD4 receptors on helper T cells, macrophages, and glial cells."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Which enzyme allows HIV to convert its single-stranded viral RNA genome into double-stranded viral DNA inside host cytoplasm?",
+        options: [
+          { text: "Reverse transcriptase", correct: true },
+          { text: "Integrase", correct: false },
+          { text: "Protease", correct: false },
+          { text: "Phospholipase A2", correct: false },
+          { text: "Cyclooxygenase", correct: false }
+        ],
+        explanation: "Reverse transcriptase converts HIV RNA into DNA inside the host cell."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Which laboratory measurement is used as the primary diagnostic benchmark to monitor HIV progression and define AIDS?",
+        options: [
+          { text: "CD4+ T cell count", correct: true },
+          { text: "Erythrocyte sedimentation rate", correct: false },
+          { text: "Total serum IgE level", correct: false },
+          { text: "Neutrophil count", correct: false },
+          { text: "Platelet count", correct: false }
+        ],
+        explanation: "CD4+ T cell count decrease is the key diagnostic marker used to monitor HIV progression and define AIDS (<200 cells/uL)."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "The 'window period' in HIV infection refers to the initial timeframe during which the patient is:",
+        options: [
+          { text: "Infected and infectious, but tests serologically negative for anti-HIV antibodies", correct: true },
+          { text: "Diagnosed with full-blown AIDS with opportunistic cancers", correct: false },
+          { text: "Completely immune to viral replication", correct: false },
+          { text: "Serologically positive with normal CD4 count above 1000", correct: false },
+          { text: "Cured of viral infection", correct: false }
+        ],
+        explanation: "The window period (4-7 weeks) is when the patient is serologically negative for antibodies but infected and contagious."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "What is the leading cause of death worldwide among individuals living with HIV/AIDS?",
+        options: [
+          { text: "Mycobacterium tuberculosis (TB)", correct: true },
+          { text: "Pneumocystis jiroveci pneumonia", correct: false },
+          { text: "Kaposi sarcoma", correct: false },
+          { text: "Candida thrush", correct: false },
+          { text: "Cryptosporidium diarrhea", correct: false }
+        ],
+        explanation: "TB is the leading cause of death with HIV worldwide."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "An AIDS patient presents with chronic, severe watery diarrhea. Stool analysis reveals a common protozoal pathogen. Which organism is most likely?",
+        options: [
+          { text: "Cryptosporidium parvum", correct: true },
+          { text: "Candida albicans", correct: false },
+          { text: "Staphylococcus aureus", correct: false },
+          { text: "Pneumocystis jiroveci", correct: false },
+          { text: "Clostridium perfringens", correct: false }
+        ],
+        explanation: "Cryptosporidium parvum is a common protozoal GI infection causing severe gastroenteritis/diarrhea in AIDS."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "Kaposi sarcoma is a malignancy affecting which cell type in AIDS patients?",
+        options: [
+          { text: "Vascular endothelial cells", correct: true },
+          { text: "CD4+ T lymphocytes", correct: false },
+          { text: "Glial cells in the brain", correct: false },
+          { text: "Alveolar pneumocytes", correct: false },
+          { text: "Osteoblasts in long bones", correct: false }
+        ],
+        explanation: "Kaposi sarcoma is a malignancy of vascular endothelial cells (associated with HHV-8) highly prevalent in AIDS."
+      },
+      {
+        lec: 5,
+        type: "mcq",
+        text: "What term describes the AIDS-related central nervous system condition characterized by cognitive impairment, motor dysfunction, and behavioral symptoms?",
+        options: [
+          { text: "AIDS Dementia / HAND (HIV-associated neurocognitive disorder)", correct: true },
+          { text: "DiGeorge encephalopathy", correct: false },
+          { text: "Raynaud syndrome", correct: false },
+          { text: "Guillain-Barré crisis", correct: false },
+          { text: "Systemic sclerosis", correct: false }
+        ],
+        explanation: "AIDS dementia (HAND - HIV-associated neurocognitive disorder) is a late CNS manifestation of cognitive/motor/behavioral impairment."
+      }
+    ];
+
+    // ---------------------------------------------------------
+    // TEST LOGIC: shuffled lecture sets, filters, Submit, SATA partial credit
+    // ---------------------------------------------------------
+    let currentLec = "all";
+    let shuffledQuestions = [];
+    let activeQuestions = [];
+    // keyed by stable question id (the original position in questionBank)
+    const userState = new Map();
+
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function buildShuffledQuestionSet() {
+        // Shuffle each lecture independently so every lecture is randomized,
+        // then shuffle the complete set so All mixes lectures and question types.
+        const grouped = [];
+        for (let lec = 1; lec <= 5; lec++) {
+            const lectureQuestions = questionBank
+                .map((q, index) => ({ ...q, qid: index }))
+                .filter(q => q.lec === lec);
+            grouped.push(...shuffleArray(lectureQuestions).map(q => ({
+                ...q,
+                options: shuffleArray(q.options)
+            })));
+        }
+        shuffledQuestions = shuffleArray(grouped);
+    }
+
+    function setActiveQuestions(lec) {
+        currentLec = lec;
+        activeQuestions = lec === "all"
+            ? [...shuffledQuestions]
+            : shuffledQuestions.filter(q => q.lec === Number(lec));
+    }
+
+    function resetAttempt() {
+        userState.clear();
+        buildShuffledQuestionSet();
+        setActiveQuestions(currentLec);
+        renderQuestions();
+        updateScore();
+    }
+
+    function filterQuestions(lec, button) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        setActiveQuestions(lec);
+        renderQuestions();
+        updateScore();
+    }
+
+    function updateScore() {
+        let submittedCount = 0;
+        let totalScore = 0;
+
+        userState.forEach(state => {
+            if (state.submitted) {
+                submittedCount++;
+                totalScore += state.score;
+            }
+        });
+
+        const grade = submittedCount > 0
+            ? Math.round((totalScore / submittedCount) * 100)
+            : 0;
+
+        const scoreElem = document.getElementById('score-counter');
+        scoreElem.textContent = `Grade: ${grade}%`;
+        scoreElem.title = `Answered ${submittedCount} / ${questionBank.length}`;
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D', 'E'];
+
+        activeQuestions.forEach((q, displayIndex) => {
+            const state = userState.get(q.qid) || { submitted: false, selected: [], score: 0 };
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            card.id = `qcard-${q.qid}`;
+
+            if (state.submitted) {
+                card.classList.add('answered');
+                if (state.score === 1) card.classList.add('is-correct');
+                else if (state.score > 0) card.classList.add('is-partial');
+                else card.classList.add('is-wrong');
+            }
+
+            let optionsHTML = '';
+            q.options.forEach((opt, optIndex) => {
+                let extraClass = '';
+                if (state.submitted) {
+                    if (opt.correct && state.score === 1) extraClass = 'user-correct';
+                    else if (opt.correct) extraClass = 'reveal-correct';
+                    else if (state.selected.includes(optIndex)) extraClass = 'user-wrong';
+                } else if (state.selected.includes(optIndex)) {
+                    extraClass = 'selected';
+                }
+
+                optionsHTML += `
+                    <button type="button" class="opt-btn ${extraClass}"
+                            ${state.submitted ? 'disabled' : ''}
+                            onclick="handleOptionClick(${q.qid}, ${optIndex})">
+                        <span class="opt-prefix">${letters[optIndex]}.</span>
+                        <span>${escapeHTML(opt.text)}</span>
+                    </button>
+                `;
+            });
+
+            const badge = q.type === 'sata' ? 'SATA' : 'MCQ';
+            const submitDisabled = state.submitted || state.selected.length === 0 ? 'disabled' : '';
+            const buttonText = state.submitted ? 'Submitted' : 'Submit Answer';
+
+            card.innerHTML = `
+                <div class="q-header">
+                    <span class="q-num">Question ${displayIndex + 1}</span>
+                    <span class="q-cat">${badge}</span>
+                </div>
+                <div class="q-text">${escapeHTML(q.text)}</div>
+                <div class="opt-list">${optionsHTML}</div>
+                <button class="submit-q-btn" id="btn_${q.qid}" ${submitDisabled}
+                        onclick="submitAnswer(${q.qid})">${buttonText}</button>
+                <div class="feedback-box" id="feedback_${q.qid}"></div>
+            `;
+
+            container.appendChild(card);
+            if (state.submitted) showFeedback(q.qid);
+        });
+    }
+
+    function handleOptionClick(qid, optIndex) {
+        const q = shuffledQuestions.find(item => item.qid === qid);
+        if (!q) return;
+
+        const existing = userState.get(qid) || { submitted: false, selected: [], score: 0 };
+        if (existing.submitted) return;
+
+        let selected;
+        if (q.type === 'mcq') {
+            selected = [optIndex];
+        } else {
+            selected = [...existing.selected];
+            const index = selected.indexOf(optIndex);
+            if (index >= 0) selected.splice(index, 1);
+            else selected.push(optIndex);
+        }
+
+        userState.set(qid, { submitted: false, selected, score: 0 });
+        renderQuestions();
+    }
+
+    function submitAnswer(qid) {
+        const q = shuffledQuestions.find(item => item.qid === qid);
+        const state = userState.get(qid);
+        if (!q || !state || state.selected.length === 0 || state.submitted) return;
+
+        state.submitted = true;
+
+        if (q.type === 'mcq') {
+            state.score = q.options[state.selected[0]]?.correct ? 1 : 0;
+        } else {
+            const totalCorrect = q.options.filter(option => option.correct).length;
+            let correctSelected = 0;
+            let incorrectSelected = 0;
+
+            state.selected.forEach(index => {
+                if (q.options[index]?.correct) correctSelected++;
+                else incorrectSelected++;
+            });
+
+            // Partial-credit scoring requested for SATA questions:
+            // +1/N for each correct selection, -1/N for each incorrect selection,
+            // with a minimum of 0 and a maximum of 1.
+            state.score = Math.min(1, Math.max(0, (correctSelected - incorrectSelected) / totalCorrect));
+        }
+
+        userState.set(qid, state);
+        updateScore();
+        renderQuestions();
+    }
+
+    function showFeedback(qid) {
+        const q = shuffledQuestions.find(item => item.qid === qid);
+        const state = userState.get(qid);
+        const fbBox = document.getElementById(`feedback_${qid}`);
+        if (!q || !state || !fbBox) return;
+
+        let statusClass = 'incorrect';
+        let titleText = '✗ Incorrect';
+
+        if (state.score === 1) {
+            statusClass = 'correct';
+            titleText = '✓ Correct!';
+        } else if (state.score > 0) {
+            statusClass = 'partial';
+            titleText = `Partial Credit (+${state.score.toFixed(2)})`;
+        }
+
+        fbBox.className = `feedback-box ${statusClass}`;
+        fbBox.style.display = 'block';
+        fbBox.innerHTML = `
+            <div class="feedback-title">${titleText}</div>
+            <div class="explanation">${escapeHTML(q.explanation)}</div>
+        `;
+    }
+
+    function escapeHTML(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    document.getElementById('navTabs').addEventListener('click', event => {
+        const button = event.target.closest('.filter-btn');
+        if (!button) return;
+        filterQuestions(button.dataset.lec, button);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', resetAttempt);
+
+    // Default state: All questions visible, shuffled on page load.
+    buildShuffledQuestionSet();
+    setActiveQuestions('all');
+    renderQuestions();
+    updateScore();
+
+    </script>
+</body>
+</html>
