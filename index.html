@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PATH2200 Practice Exam Portal</title>
+<style>
+:root{--primary:#1e3a8a;--primary-light:#3b82f6;--bg:#f8fafc;--card-bg:#fff;--text-main:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--shadow-hover:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text-main);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,var(--primary),#1e293b);color:#fff;padding:48px 20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.header-container{max-width:900px;margin:0 auto} header h1{font-size:2.25rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em} header p{font-size:1.05rem;color:#cbd5e1;max-width:680px;margin:0 auto}
+main{max-width:900px;margin:40px auto;padding:0 20px;flex-grow:1;width:100%}
+.section-title{font-size:1.25rem;font-weight:700;color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.section-title:after{content:"";flex:1;height:2px;background:var(--border)}
+.exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}.exam-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;color:inherit;position:relative;overflow:hidden;min-height:220px}.exam-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--primary-light)}.exam-card.disabled{opacity:.6;pointer-events:none;background:#f1f5f9}
+.card-tag{align-self:flex-start;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:20px;background:#eff6ff;color:var(--primary-light);margin-bottom:12px}.card-tag.upcoming{background:#f3f4f6;color:var(--text-muted)}.card-title{font-size:1.2rem;font-weight:700;margin-bottom:8px;color:var(--text-main)}.card-desc{font-size:.88rem;color:var(--text-muted);margin-bottom:20px;flex-grow:1}.card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.85rem;font-weight:600;color:var(--primary-light);border-top:1px solid var(--border);padding-top:14px}.btn-action{display:inline-flex;align-items:center;gap:6px}
+.schedule-card{margin-top:40px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.schedule-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}.schedule-header h2{font-size:1.05rem;font-weight:700;color:var(--primary)}.schedule-header span{font-size:.78rem;color:var(--text-muted)}.schedule-table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:.84rem}th{background:#f8fafc;color:var(--text-muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:none}.test-row td{font-weight:600}.reading-week td{color:var(--text-muted);font-style:italic;background:#fafafa}
+footer{text-align:center;padding:24px 20px;font-size:.85rem;color:var(--text-muted);border-top:1px solid var(--border);background:#fff}
+@media(max-width:640px){header{padding:36px 18px}header h1{font-size:1.8rem}header p{font-size:.95rem}main{margin:28px auto;padding:0 16px}.exam-grid{grid-template-columns:1fr}.schedule-header{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="header-container"><h1>PATH2200 Practice Suite</h1><p>Interactive Pathophysiology practice exam collection for PATH2200.</p></div></header>
+<main>
+<div class="section-title">Available Practice Exams</div>
+<div class="exam-grid">
+<a href="path2200_test1_practice.html" class="exam-card"><div><span class="card-tag">Active</span><h2 class="card-title">Term Test 1 Practice Exam</h2><p class="card-desc">Practice set covering Altered Cell Biology &amp; Cell Injury, Cell Death &amp; Inflammation, Immunity, and Hypersensitivity/Immunodeficiencies.</p></div><div class="card-footer"><span>Test 1</span><span class="btn-action">Start Exam &rarr;</span></div></a>
+<a href="#" class="exam-card disabled" aria-disabled="true"><div><span class="card-tag upcoming">Upcoming</span><h2 class="card-title">Term Test 2 Practice Exam</h2><p class="card-desc">Future practice exam covering the later PATH2200 material, including Skeletal and Neurologic units.</p></div><div class="card-footer"><span>TBA</span><span>Coming Soon</span></div></a>
+<a href="#" class="exam-card disabled" aria-disabled="true"><div><span class="card-tag upcoming">Upcoming</span><h2 class="card-title">Final Exam Practice</h2><p class="card-desc">Future cumulative review covering the remaining PATH2200 course material, including Endocrine and prior units.</p></div><div class="card-footer"><span>TBA</span><span>Coming Soon</span></div></a>
+</div>
+<section class="schedule-card"><div class="schedule-header"><h2>PATH2200 Course Schedule</h2><span>Thursday class dates</span></div><div class="schedule-table-wrap"><table><thead><tr><th>Week</th><th>Date</th><th>Course Content</th></tr></thead><tbody>
+<tr><td>1</td><td>Sept. 10</td><td>Altered Cell Biology and Cell Injury</td></tr>
+<tr><td>2</td><td>Sept. 17</td><td>Cell Death and Inflammation</td></tr>
+<tr><td>3</td><td>Sept. 24</td><td>Immunity</td></tr>
+<tr><td>4</td><td>Oct. 1</td><td>Hypersensitivity / Immunodeficiencies</td></tr>
+<tr class="test-row"><td>5</td><td>Oct. 8</td><td>Term Test 1 / Cancer</td></tr>
+<tr><td>6</td><td>Oct. 15</td><td>Cancer</td></tr>
+<tr><td>7</td><td>Oct. 22</td><td>Cancer / Skeletal</td></tr>
+<tr class="reading-week"><td>&mdash;</td><td>Oct. 29</td><td>Reading Week</td></tr>
+<tr><td>8</td><td>Nov. 5</td><td>Skeletal</td></tr>
+<tr class="test-row"><td>9</td><td>Nov. 12</td><td>Term Test 2 / Neuro</td></tr>
+<tr><td>10</td><td>Nov. 19</td><td>Neuro</td></tr>
+<tr><td>11</td><td>Nov. 26</td><td>Neuro</td></tr>
+<tr><td>12</td><td>Dec. 3</td><td>Endocrine</td></tr>
+<tr><td>13</td><td>Dec. 10</td><td>Endocrine</td></tr>
+<tr class="test-row"><td>14</td><td>TBA</td><td>Exam</td></tr>
+</tbody></table></div></section>
+</main>
+<footer>PATH2200 Study Portal &bull; Hosted on GitHub Pages</footer>
+</body>
+</html>
