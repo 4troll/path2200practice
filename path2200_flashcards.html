@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PATH2200 Test 2 Smart Flashcards</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --again-red: #dc2626;
+      --good-green: #16a34a;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Sticky Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      padding: 12px 16px;
+    }
+
+    .header-content {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .header-title p {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .stats-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 700px;
+      width: 100%;
+      margin: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      max-width: 600px;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* 3D Quizlet Flip Card Scene */
+    .flashcard-scene {
+      perspective: 1200px;
+      width: 100%;
+      max-width: 600px;
+      height: 320px;
+      cursor: pointer;
+      margin-bottom: 24px;
+      touch-action: pan-y;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      will-change: transform;
+    }
+
+    .flashcard.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px;
+      user-select: none;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: #fafafa;
+    }
+
+    .card-category {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-body {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: center;
+      line-height: 1.5;
+      margin: auto 0;
+    }
+
+    .card-back .card-body {
+      color: var(--good-green);
+      font-size: 1.25rem;
+    }
+
+    .card-footer-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Action Buttons Area */
+    .actions-container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      gap: 16px;
+      opacity: 0.4;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .actions-container.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.1s ease, background-color 0.15s ease;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-again {
+      background-color: var(--again-red);
+      color: #ffffff;
+    }
+
+    .btn-again:hover {
+      background-color: #b91c1c;
+    }
+
+    .btn-good {
+      background-color: var(--good-green);
+      color: #ffffff;
+    }
+
+    .btn-good:hover {
+      background-color: #15803d;
+    }
+
+    /* Completion Screen */
+    .completion-screen {
+      display: none;
+      text-align: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .completion-screen h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .completion-screen p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .restart-btn {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .restart-btn:hover {
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .flashcard-scene { height: 280px; }
+      .card-body { font-size: 1.05rem; }
+      .card-face { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="header-title">
+        <h1>PATH2200 Test 2 Deck</h1>
+        <p>Cancer & Musculoskeletal Practice Worksheet</p>
+      </div>
+      <div class="stats-badge" id="statsBadge">Due: 118</div>
+    </div>
+  </header>
+
+  <main>
+    <div id="studyArea" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+      <div class="progress-container">
+        <span id="progressText">Card 1 of 118</span>
+        <span id="queueStatsText">Queue: 118 main | 0 review</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+
+      <div class="flashcard-scene" id="cardScene">
+        <div class="flashcard" id="flashcard">
+          <div class="card-face card-front">
+            <div class="card-category" id="cardCategory">Section 1: Cancer Pathophysiology</div>
+            <div class="card-body" id="cardFrontText">Loading question...</div>
+            <div class="card-footer-hint">Click or press Space to flip</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-category">Answer</div>
+            <div class="card-body" id="cardBackText">Loading answer...</div>
+            <div class="card-footer-hint">Select rating or swipe/arrow keys</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-container" id="actionsContainer">
+        <button class="action-btn btn-again" onclick="handleResponse('again')">Again</button>
+        <button class="action-btn btn-good" onclick="handleResponse('good')">Good</button>
+      </div>
+    </div>
+
+    <div class="completion-screen" id="completionScreen">
+      <h2>🎉 Session Complete!</h2>
+      <p>You have successfully reviewed all cards in this practice session.</p>
+      <button class="restart-btn" onclick="restartSession()">Study Again</button>
+    </div>
+  </main>
+
+  <script>
+    // Complete 118 Questions from PATH 2200 Practice Worksheet
+    const rawCards = [
+      { id: 1, cat: "Section 1: Cancer - Nomenclature", front: "Malignant tumors demonstrate poor cellular differentiation, a condition known as ___ where cells lose specialized functions.", back: "Anaplasia" },
+      { id: 2, cat: "Section 1: Cancer - Nomenclature", front: "Variations in cell size and shape within a malignant tumor mass are referred to as ___.", back: "Pleomorphism" },
+      { id: 3, cat: "Section 1: Cancer - Nomenclature", front: "Malignant nuclei display abnormal nuclear morphology and dark staining termed ___.", back: "Dyskaryosis" },
+      { id: 4, cat: "Section 1: Cancer - Nomenclature", front: "Unlike malignant tumors, benign tumors are slow-growing and enclosed within a protective fibrous ___.", back: "Capsule" },
+      { id: 5, cat: "Section 1: Cancer - Nomenclature", front: "To support expanding tumor mass beyond 1 to 2 mm, malignant cells secrete tumor ___ factor to stimulate new capillary sprouting.", back: "Angiogenesis (or VEGF)" },
+      { id: 6, cat: "Section 1: Cancer - Nomenclature", front: "Malignant cells produce proteolytic enzymes such as ___ to dissolve extracellular matrix barriers and facilitate stromal invasion.", back: "Collagenase" },
+      { id: 7, cat: "Section 1: Cancer - Nomenclature", front: "Benign epithelial and mesenchymal tumors typically receive the suffix ___ (e.g., adenoma).", back: "-oma" },
+      { id: 8, cat: "Section 1: Cancer - Nomenclature", front: "Malignant tumors arising from epithelial tissues carry the suffix ___ (e.g., adenocarcinoma).", back: "-carcinoma" },
+      { id: 9, cat: "Section 1: Cancer - Nomenclature", front: "Malignant tumors originating from mesenchymal tissues carry the suffix ___ (e.g., osteosarcoma).", back: "-sarcoma" },
+      { id: 10, cat: "Section 1: Cancer - Nomenclature", front: "A malignant neoplasm of melanocytes in the skin is termed ___ (despite its misleading suffix).", back: "Melanoma" },
+      { id: 11, cat: "Section 1: Cancer - Nomenclature", front: "Malignant tumors originating in lymphoid tissue are called ___.", back: "Lymphoma" },
+      { id: 12, cat: "Section 1: Cancer - Nomenclature", front: "Malignant neoplasms of hematopoietic stem cells in bone marrow are termed ___.", back: "Leukemia" },
+      { id: 13, cat: "Section 1: Cancer - Nomenclature", front: "A non-neoplastic, localized collection of extravasated blood outside blood vessels is called a ___.", back: "Hematoma" },
+      { id: 14, cat: "Section 1: Cancer - Nomenclature", front: "When malignant transformation occurs strictly within the epithelial basement membrane without stromal invasion, it is classified as carcinoma ___.", back: "in situ" },
+      { id: 15, cat: "Section 1: Cancer - Genetics", front: "Normal regulatory genes that promote cell division and survival under physiological control are called ___.", back: "Proto-oncogenes" },
+      { id: 16, cat: "Section 1: Cancer - Genetics", front: "When proto-oncogenes suffer gain-of-function point mutations, they turn into hyperactive, growth-promoting ___.", back: "Oncogenes" },
+      { id: 17, cat: "Section 1: Cancer - Genetics", front: "A classic example of a mutated oncogene that drives relentless cell proliferation is ___.", back: "Ras" },
+      { id: 18, cat: "Section 1: Cancer - Genetics", front: "Genes that act as cellular 'brakes' by halting the cell cycle or triggering apoptosis are called ___ genes.", back: "Tumor suppressor" },
+      { id: 19, cat: "Section 1: Cancer - Genetics", front: "The most critical tumor suppressor gene, frequently termed the 'guardian of the genome,' is ___.", back: "TP53 (or p53)" },
+      { id: 20, cat: "Section 1: Cancer - Genetics", front: "According to Knudson's ___ hypothesis, both alleles of a tumor suppressor gene must be inactivated for malignant transformation.", back: "Two-hit" },
+      { id: 21, cat: "Section 1: Cancer - Genetics", front: "Mutations occurring in non-germline body cells acquired during an individual's lifetime are called ___ mutations.", back: "Somatic" },
+      { id: 22, cat: "Section 1: Cancer - Genetics", front: "Mutations occurring in reproductive sex cells that are inheritable by offspring are called ___ mutations.", back: "Germline" },
+      { id: 23, cat: "Section 1: Cancer - Genetics", front: "An inherited mutation in the tumor suppressor gene ___ confers an 80% lifetime risk of breast cancer.", back: "BRCA1" },
+      { id: 24, cat: "Section 1: Cancer - Genetics", front: "The evolutionary divergence of a primary tumor into multiple genetically distinct sub-clones is termed tumor ___.", back: "Heterogeneity" },
+      { id: 25, cat: "Section 1: Cancer - Carcinogens", front: "Cigarette smoke contains dozens of inactive chemical precursors called ___ requiring metabolic conversion.", back: "Procarcinogens (indirect-reactive agents)" },
+      { id: 26, cat: "Section 1: Cancer - Carcinogens", front: "Tobacco smoke is directly linked to approximately ___% of ALL Canadian cancer deaths.", back: "39%" },
+      { id: 27, cat: "Section 1: Cancer - Carcinogens", front: "Tobacco smoke is directly linked to approximately ___% of Canadian lung cancer deaths.", back: "85%" },
+      { id: 28, cat: "Section 1: Cancer - Carcinogens", front: "Second-hand environmental tobacco smoke causes over ___ annual lung cancer deaths among non-smokers in Canada.", back: "500" },
+      { id: 29, cat: "Section 1: Cancer - Carcinogens", front: "Ultraviolet (UV) radiation acts as a form of ___ radiation that strips electrons from biological molecules.", back: "Ionizing" },
+      { id: 30, cat: "Section 1: Cancer - Carcinogens", front: "Ionization of biological molecules produces highly unstable atomic species with unpaired electrons called ___ radicals.", back: "Free" },
+      { id: 31, cat: "Section 1: Cancer - Carcinogens", front: "UV radiation creates specific cutaneous DNA lesions by cross-linking adjacent pyrimidine bases to form ___ dimers.", back: "Pyrimidine" },
+      { id: 32, cat: "Section 1: Cancer - Carcinogens", front: "Intense, episodic exposure to sunlight during ___ carries a disproportionately high risk for developing cutaneous melanoma.", back: "Childhood" },
+      { id: 33, cat: "Section 1: Cancer - Infections", front: "Biological infectious pathogens account for approximately ___% of all human malignancies worldwide.", back: "15%" },
+      { id: 34, cat: "Section 1: Cancer - Infections", front: "Chronic Hepatitis B Virus (HBV) infection causes approximately ___% of primary hepatocellular carcinomas.", back: "60%" },
+      { id: 35, cat: "Section 1: Cancer - Infections", front: "High-risk HPV integration increases the expression of viral oncogenes ___ (specifically E6 and E7).", back: "E6 and E7" },
+      { id: 36, cat: "Section 1: Cancer - Infections", front: "High-risk HPV strains cause over ___% of all cervical and anal carcinomas.", back: "90%" },
+      { id: 37, cat: "Section 1: Cancer - Infections", front: "Low-risk HPV strains cause benign epithelial growths on skin and mucosa called ___.", back: "Papillomas" },
+      { id: 38, cat: "Section 1: Cancer - Infections", front: "Helicobacter pylori erodes the protective gastric mucosal barrier, causing stomach acid ___ and chronic ulceration.", back: "Autodigestion" },
+      { id: 39, cat: "Section 1: Cancer - Treatments", front: "When total tumor removal is impossible, surgeons perform ___ surgery to reduce overall tumor cell burden.", back: "De-bulking" },
+      { id: 40, cat: "Section 1: Cancer - Treatments", front: "Surgical stress-induced immunosuppression increases patient susceptibility to hospital-acquired or ___ infections.", back: "Nosocomial" },
+      { id: 41, cat: "Section 1: Cancer - Treatments", front: "Radiation therapy utilizes high-energy rays generated by a rotating linear ___.", back: "Accelerator" },
+      { id: 42, cat: "Section 1: Cancer - Treatments", front: "Dissolved tissue ___ acts as a powerful radiosensitizer by reacting with radiation to generate toxic free radicals.", back: "Oxygen" },
+      { id: 43, cat: "Section 1: Cancer - Treatments", front: "Radiation provides rapid palliative symptom relief in ___% to 80% of patients with bone metastases.", back: "60%" },
+      { id: 44, cat: "Section 1: Cancer - Treatments", front: "Cytotoxic chemotherapy is most effective against tumors displaying a high growth ___ of dividing cells.", back: "Fraction" },
+      { id: 45, cat: "Section 1: Cancer - Treatments", front: "According to the Log-Kill Hypothesis, chemotherapy kills a constant ___ of cancer cells per dose cycle.", back: "Proportion (percentage)" },
+      { id: 46, cat: "Section 1: Cancer - Treatments", front: "To overcome tumor heterogeneity, oncologists administer chemotherapy as ___ drug cocktails.", back: "Combination" },
+      { id: 47, cat: "Section 1: Cancer - Treatments", front: "Destruction of hematopoietic stem cells leads to a simultaneous drop in RBCs, WBCs, and platelets termed ___.", back: "Pancytopenia" },
+      { id: 48, cat: "Section 1: Cancer - Treatments", front: "A dangerously low blood platelet count or ___ causes impaired hemostasis and spontaneous bleeding.", back: "Thrombocytopenia" },
+      { id: 49, cat: "Section 1: Cancer - Treatments", front: "Bone marrow neutrophil recovery is supported by recombinant hematopoietic growth factors such as ___.", back: "G-CSF (Granulocyte colony-stimulating factor)" },
+      { id: 50, cat: "Section 1: Cancer - Treatments", front: "Cytotoxic mucosal damage causes painful inflammation of oral and GI membranes known as ___.", back: "Mucositis" },
+      { id: 51, cat: "Section 1: Cancer - Treatments", front: "Atrophy of rapidly dividing hair follicle matrix cells causes temporary hair loss or ___.", back: "Alopecia" },
+      { id: 52, cat: "Section 1: Cancer - Treatments", front: "Hair regrowth typically begins within ___ to 8 weeks following chemotherapy cessation.", back: "6" },
+      { id: 53, cat: "Section 1: Cancer - Treatments", front: "Cytotoxic damage to germ cells results in complete absence of viable sperm or ___ in males.", back: "Azoospermia" },
+      { id: 54, cat: "Section 1: Cancer - Treatments", front: "Endogenous cytokines called ___ are administered as biotherapy for anti-proliferative and anti-angiogenic actions.", back: "Interferons" },
+      { id: 55, cat: "Section 1: Case Study - Breast Cancer", front: "The male patient in the assigned occult breast cancer case report was ___ years old.", back: "49" },
+      { id: 56, cat: "Section 1: Case Study - Breast Cancer", front: "The patient presented with a firm, mobile, painless mass measuring 4x3 cm in his left ___.", back: "Axilla" },
+      { id: 57, cat: "Section 1: Case Study - Breast Cancer", front: "PET-CT body scanning revealed active metastatic lesions in the left axillary and ___ regions.", back: "Infraclavicular" },
+      { id: 58, cat: "Section 1: Case Study - Breast Cancer", front: "Immunohistochemical profiling revealed high positivity for Estrogen Receptor at ___%.", back: "90%" },
+      { id: 59, cat: "Section 1: Case Study - Breast Cancer", front: "IHC profiling revealed Progesterone Receptor positivity at ___%.", back: "50%" },
+      { id: 60, cat: "Section 1: Case Study - Breast Cancer", front: "The tissue stained positive for ___ (GCDFP-15), confirming breast tissue origin.", back: "Gross Cystic Disease Fluid Protein-15" },
+      { id: 61, cat: "Section 1: Case Study - Breast Cancer", front: "According to the AJCC staging system, the patient's disease was classified as T0N3aM0, representing Stage ___.", back: "IIIC" },
+      { id: 62, cat: "Section 1: Case Study - Breast Cancer", front: "The surgical team performed Axillary Lymph Node Dissection ___ a mastectomy, as total breast removal offers no survival benefit.", back: "Without" },
+      { id: 63, cat: "Section 1: Case Study - Breast Cancer", front: "Postoperative pathology revealed metastasis in ___ out of 49 dissected lymph nodes.", back: "48" },
+      { id: 64, cat: "Section 1: Case Study - Breast Cancer", front: "The patient received adjuvant chemotherapy using the ___ scheme (paclitaxel, pharmorubicin, cyclophosphamide).", back: "TEC" },
+      { id: 65, cat: "Section 1: Case Study - Breast Cancer", front: "Long-term daily endocrine therapy for the patient consisted of the SERM medication ___.", back: "Tamoxifen" },
+      { id: 66, cat: "Section 2: MSK - Bone Anatomy", front: "Dense outer cortical bone comprises approximately ___% of total skeletal mass.", back: "80%" },
+      { id: 67, cat: "Section 2: MSK - Bone Anatomy", front: "Inner cancellous bone consists of a lattice of branching trabeculae housing ___ bone marrow.", back: "Red" },
+      { id: 68, cat: "Section 2: MSK - Bone Anatomy", front: "Compact bone is structured into cylindrical functional units called ___ centered around Haversian canals.", back: "Osteons (Haversian systems)" },
+      { id: 69, cat: "Section 2: MSK - Bone Anatomy", front: "The organic bone matrix component (~35% of weight) called ___ provides tensile strength and flexibility.", back: "Osteoid" },
+      { id: 70, cat: "Section 2: MSK - Bone Anatomy", front: "The inorganic mineral component (~65% of weight) composed of calcium phosphate is called ___.", back: "Hydroxyapatite" },
+      { id: 71, cat: "Section 2: MSK - Bone Anatomy", front: "Active osteoblasts secrete the enzyme alkaline ___ (ALP) to promote matrix mineralization.", back: "Phosphatase" },
+      { id: 72, cat: "Section 2: MSK - Bone Anatomy", front: "Giant multinucleated cells that resorb bone matrix within shallow pits called ___ lacunae are osteoclasts.", back: "Howship's" },
+      { id: 73, cat: "Section 2: MSK - Bone Anatomy", front: "Mature osteocytes communicate via micro-channels called ___.", back: "Canaliculi" },
+      { id: 74, cat: "Section 2: MSK - Bone Anatomy", front: "Osteocytes act as primary mechanosensors that direct remodeling according to ___'s Law.", back: "Wolff's Law" },
+      { id: 75, cat: "Section 2: MSK - Bone Anatomy", front: "To stimulate bone resorption, osteoblasts express a surface ligand called ___ (RANKL).", back: "Receptor Activator of Nuclear Factor κB Ligand (RANKL)" },
+      { id: 76, cat: "Section 2: MSK - Bone Anatomy", front: "RANKL binds to the ___ receptor located on osteoclast precursor cells.", back: "RANK" },
+      { id: 77, cat: "Section 2: MSK - Bone Anatomy", front: "To prevent excessive bone breakdown, osteoblasts secrete a soluble decoy receptor called ___ (OPG).", back: "Osteoprotegerin (OPG)" },
+      { id: 78, cat: "Section 2: MSK - Bone Anatomy", front: "The protective hormone ___ maintains female bone mass by upregulating OPG and inducing osteoclast apoptosis.", back: "Estrogen" },
+      { id: 79, cat: "Section 2: MSK - Bone Diseases", front: "In osteoporosis, the normal 4-month bone remodeling cycle lengthens up to ___ years.", back: "2 years" },
+      { id: 80, cat: "Section 2: MSK - Bone Diseases", front: "On DEXA bone densitometry, osteoporosis is defined by a WHO T-score of ___ or lower.", back: "-2.5" },
+      { id: 81, cat: "Section 2: MSK - Bone Diseases", front: "Postmenopausal osteoporosis is driven by a decline in ___ levels, causing an OPG deficit.", back: "Estrogen" },
+      { id: 82, cat: "Section 2: MSK - Bone Diseases", front: "Osteomalacia and rickets result from inadequate mineralization of osteoid due to a deficiency in Vitamin ___.", back: "D" },
+      { id: 83, cat: "Section 2: MSK - Bone Diseases", front: "Adult osteomalacia leads to soft bones and a characteristic ___ gait abnormality due to muscle weakness.", back: "Waddling" },
+      { id: 84, cat: "Section 2: MSK - Bone Diseases", front: "Paget's disease radiographs reveal classic ___ wool patches in the skull.", back: "Cotton" },
+      { id: 85, cat: "Section 2: MSK - Bone Diseases", front: "Laboratory evaluation in Paget's disease reveals markedly elevated serum levels of the osteoblast enzyme ___.", back: "Alkaline Phosphatase (ALP)" },
+      { id: 86, cat: "Section 2: MSK - Bone Diseases", front: "Severe bacterial infection of bone and marrow is most commonly caused by the pathogen ___.", back: "Staphylococcus aureus" },
+      { id: 87, cat: "Section 2: MSK - Bone Diseases", front: "In chronic osteomyelitis, an isolated, devitalized fragment of necrotic bone is termed a ___.", back: "Sequestrum" },
+      { id: 88, cat: "Section 2: MSK - Bone Diseases", front: "The surrounding sheath of reactive new bone formed around necrotic bone in osteomyelitis is the ___.", back: "Involucrum" },
+      { id: 89, cat: "Section 2: MSK - Soft Tissue", front: "A stretching or tearing injury to a muscle or tendon is classified as a ___.", back: "Strain" },
+      { id: 90, cat: "Section 2: MSK - Soft Tissue", front: "A stretching or tearing injury affecting a joint stabilization ligament is classified as a ___.", back: "Sprain" },
+      { id: 91, cat: "Section 2: MSK - Soft Tissue", front: "In a severe Grade 4 sprain, complete ligament disruption is accompanied by an ___ fracture.", back: "Avulsion" },
+      { id: 92, cat: "Section 2: MSK - Soft Tissue", front: "During soft tissue repair, fibroblasts deposit Type III collagen by days 4 to ___.", back: "5" },
+      { id: 93, cat: "Section 2: MSK - Soft Tissue", front: "Heavy mechanical loads must be avoided for ___ to 8 weeks following soft tissue repair.", back: "6" },
+      { id: 94, cat: "Section 2: MSK - Soft Tissue", front: "Cold cryotherapy application causes local blood vessel ___ to limit acute tissue swelling.", back: "Vasoconstriction" },
+      { id: 95, cat: "Section 2: MSK - Soft Tissue", front: "Elevating injured limbs above heart level promotes ___ and lymphatic return.", back: "Venous" },
+      { id: 96, cat: "Section 2: MSK - Soft Tissue", front: "A life-threatening anaerobic open fracture infection producing subcutaneous gas is caused by Clostridium ___.", back: "perfringens" },
+      { id: 97, cat: "Section 2: MSK - Soft Tissue", front: "In acute compartment syndrome, pain out of proportion aggravated by passive ___ is an early sign.", back: "Stretch" },
+      { id: 98, cat: "Section 2: MSK - Soft Tissue", front: "The definitive surgical emergency procedure required to relieve compartment pressure is a ___.", back: "Fasciotomy" },
+      { id: 99, cat: "Section 2: MSK - Arthropathies", front: "Rheumatoid arthritis is a systemic autoimmune disease targeting the ___ membrane of synovial joints.", back: "Synovial" },
+      { id: 100, cat: "Section 2: MSK - Arthropathies", front: "Rheumatoid arthritis demonstrates a strong genetic association with the HLA-___ allele.", back: "DR4" },
+      { id: 101, cat: "Section 2: MSK - Arthropathies", front: "B cells in RA synthesize autoantibodies including Rheumatoid ___ (IgM anti-IgG Fc).", back: "Factor (RF)" },
+      { id: 102, cat: "Section 2: MSK - Arthropathies", front: "RA diagnostic autoantibodies also target anti-Cyclic Citrullinated Peptide or anti-___.", back: "CCP" },
+      { id: 103, cat: "Section 2: MSK - Arthropathies", front: "Hyperplastic, vascularized granulation tissue that erodes articular cartilage in RA is called ___.", back: "Pannus" },
+      { id: 104, cat: "Section 2: MSK - Arthropathies", front: "Morning joint stiffness in RA is characteristic when lasting longer than ___ hour.", back: "1" },
+      { id: 105, cat: "Section 2: MSK - Arthropathies", front: "Late-stage fibrous scar tissue calcification in RA causes complete joint fusion or bony ___.", back: "Ankylosis" },
+      { id: 106, cat: "Section 2: MSK - Arthropathies", front: "Osteoarthritis is a localized degenerative joint disease characterized by breakdown of ___ cartilage.", back: "Articular" },
+      { id: 107, cat: "Section 2: MSK - Arthropathies", front: "Radiographic hallmarks of osteoarthritis include joint space narrowing, sclerosis, and bone spurs called ___.", back: "Osteophytes" },
+      { id: 108, cat: "Section 2: MSK - Arthropathies", front: "Osteophyte formation produces DIP joint swellings called ___'s nodes.", back: "Heberden's nodes" },
+      { id: 109, cat: "Section 2: MSK - Arthropathies", front: "Gout is caused by hyperuricemia where purine degradation end-products crystallize into monosodium ___ crystals.", back: "Urate (MSU)" },
+      { id: 110, cat: "Section 2: MSK - Arthropathies", front: "Large, permanent subcutaneous crystal aggregations in chronic tophaceous gout are called ___.", back: "Tophi" },
+      { id: 111, cat: "Section 2: Case Study - RA and Gout", front: "The patient in the RA-gout coexistence case study was a ___-year-old female.", back: "44" },
+      { id: 112, cat: "Section 2: Case Study - RA and Gout", front: "Despite hand/wrist control, she developed persistent non-responsive swelling in both ___ joints.", back: "Knee" },
+      { id: 113, cat: "Section 2: Case Study - RA and Gout", front: "Knee ultrasonography revealed effusion, cysts, and the pathognomonic ___ Track Sign.", back: "Double" },
+      { id: 114, cat: "Section 2: Case Study - RA and Gout", front: "Arthrocentesis and polarization microscopy demonstrated negatively ___ needle-like MSU crystals.", back: "Birefringent" },
+      { id: 115, cat: "Section 2: Case Study - RA and Gout", front: "Serum uric acid can remain normal during flares because female sex hormones promote renal ___ clearance.", back: "Uric acid" },
+      { id: 116, cat: "Section 2: Case Study - RA and Gout", front: "Anti-rheumatic drugs like Methotrexate and ___ (LEF) actively lower serum uric acid.", back: "Leflunomide" },
+      { id: 117, cat: "Section 2: Case Study - RA and Gout", front: "Acute gout flares worsen at night because systemic levels of the anti-inflammatory hormone ___ drop to a nadir.", back: "Cortisol" },
+      { id: 118, cat: "Section 2: Case Study - RA and Gout", front: "Gout flares demonstrate a seasonal peak during warm, humid weather in the month of ___.", back: "July" }
+    ];
+
+    // State management for session
+    let mainQueue = [];
+    let reviewQueue = []; 
+    let currentCard = null;
+    let isFlipped = false;
+    let hasBeenRevealed = false;
+    let totalCardsCount = 0;
+    let completedCount = 0;
+    let turnsCount = 0;
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = arr[i]; 
+        arr[i] = arr[j]; 
+        arr[j] = temp;
+      }
+      return arr;
+    }
+
+    function initSession() {
+      mainQueue = shuffle([...rawCards]);
+      reviewQueue = [];
+      totalCardsCount = rawCards.length;
+      completedCount = 0;
+      turnsCount = 0;
+      
+      document.getElementById('completionScreen').style.display = 'none';
+      document.getElementById('studyArea').style.display = 'flex';
+      
+      nextCard();
+    }
+
+    function nextCard() {
+      isFlipped = false;
+      hasBeenRevealed = false;
+      const flashcard = document.getElementById('flashcard');
+      
+      flashcard.style.transition = 'none';
+      flashcard.style.transform = '';
+      flashcard.style.opacity = '1';
+      flashcard.classList.remove('is-flipped');
+      document.getElementById('actionsContainer').classList.remove('active');
+
+      void flashcard.offsetWidth;
+      flashcard.style.transition = '';
+
+      reviewQueue.forEach(item => {
+        if (item.cooldown > 0) item.cooldown--;
+      });
+
+      let eligibleReviewIndex = reviewQueue.findIndex(item => item.cooldown <= 0);
+      
+      if (eligibleReviewIndex !== -1 && (turnsCount % 5 === 0 || mainQueue.length === 0)) {
+        currentCard = reviewQueue.splice(eligibleReviewIndex, 1)[0].card;
+      } else if (mainQueue.length > 0) {
+        currentCard = mainQueue.shift();
+      } else if (reviewQueue.length > 0) {
+        reviewQueue.sort((a, b) => a.cooldown - b.cooldown);
+        currentCard = reviewQueue.shift().card;
+      } else {
+        showCompletion();
+        return;
+      }
+
+      turnsCount++;
+      updateDisplay();
+    }
+
+    function toggleFlip() {
+      if (!currentCard) return;
+      isFlipped = !isFlipped;
+      if (isFlipped) {
+        hasBeenRevealed = true;
+      }
+
+      const flashcard = document.getElementById('flashcard');
+      const actions = document.getElementById('actionsContainer');
+      
+      flashcard.style.transform = '';
+      
+      if (isFlipped) {
+        flashcard.classList.add('is-flipped');
+      } else {
+        flashcard.classList.remove('is-flipped');
+      }
+
+      if (hasBeenRevealed) {
+        actions.classList.add('active');
+      } else {
+        actions.classList.remove('active');
+      }
+    }
+
+    function handleResponse(responseType) {
+      if (!currentCard || !hasBeenRevealed) return;
+
+      const flashcard = document.getElementById('flashcard');
+      document.getElementById('actionsContainer').classList.remove('active');
+
+      // Fast, snappy 0.2s toss animation without fade/gray out
+      flashcard.style.transition = 'transform 0.2s ease-out';
+      const flipState = isFlipped ? 'rotateY(180deg)' : '';
+      
+      if (responseType === 'again') {
+        flashcard.style.transform = `translate3d(-120vw, 20px, 0) rotate(-20deg) ${flipState}`;
+      } else {
+        flashcard.style.transform = `translate3d(120vw, 20px, 0) rotate(20deg) ${flipState}`;
+      }
+
+      setTimeout(() => {
+        if (responseType === 'again') {
+          const cooldownTurns = 20;
+          reviewQueue.push({ card: currentCard, cooldown: cooldownTurns });
+          reviewQueue = shuffle(reviewQueue);
+        } else {
+          completedCount++;
+        }
+        nextCard();
+      }, 200);
+    }
+
+    function updateDisplay() {
+      document.getElementById('cardCategory').textContent = currentCard.cat;
+      document.getElementById('cardFrontText').textContent = currentCard.front;
+      document.getElementById('cardBackText').textContent = currentCard.back;
+
+      const remainingTotal = mainQueue.length + reviewQueue.length + 1;
+      const progressPercent = Math.round((completedCount / totalCardsCount) * 100);
+      
+      document.getElementById('progressText').textContent = `Completed: ${completedCount} / ${totalCardsCount}`;
+      document.getElementById('queueStatsText').textContent = `Main: ${mainQueue.length} | Review: ${reviewQueue.length}`;
+      document.getElementById('progressBarFill').style.width = `${progressPercent}%`;
+      document.getElementById('statsBadge').textContent = `Due: ${remainingTotal}`;
+    }
+
+    function showCompletion() {
+      document.getElementById('studyArea').style.display = 'none';
+      document.getElementById('completionScreen').style.display = 'block';
+      document.getElementById('statsBadge').textContent = `Completed!`;
+    }
+
+    function restartSession() {
+      initSession();
+    }
+
+    // Touch & Mouse Drag / Swipe Mechanics with Click-to-Flip
+    const scene = document.getElementById('cardScene');
+    const flashcard = document.getElementById('flashcard');
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let hasMoved = false;
+
+    scene.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      hasMoved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      flashcard.style.transition = 'none';
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      currentX = e.clientX;
+      const diffX = currentX - startX;
+      const diffY = e.clientY - startY;
+
+      if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
+        hasMoved = true;
+      }
+
+      if (hasMoved) {
+        const rotation = diffX * 0.08;
+        const flipState = isFlipped ? 'rotateY(180deg)' : '';
+        flashcard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg) ${flipState}`;
+      }
+    });
+
+    window.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      flashcard.style.transition = '';
+
+      const diffX = currentX - startX;
+      if (!hasMoved) {
+        toggleFlip();
+        return;
+      }
+
+      if (diffX < -100) {
+        if (hasBeenRevealed) {
+          flashcard.style.transition = 'transform 0.2s ease-out';
+          const flipState = isFlipped ? 'rotateY(180deg)' : '';
+          flashcard.style.transform = `translate3d(-120vw, 20px, 0) rotate(-20deg) ${flipState}`;
+          setTimeout(() => handleResponseFromSwipe('again'), 200);
+        } else {
+          snapBackCard();
+        }
+      } else if (diffX > 100) {
+        if (hasBeenRevealed) {
+          flashcard.style.transition = 'transform 0.2s ease-out';
+          const flipState = isFlipped ? 'rotateY(180deg)' : '';
+          flashcard.style.transform = `translate3d(120vw, 20px, 0) rotate(20deg) ${flipState}`;
+          setTimeout(() => handleResponseFromSwipe('good'), 200);
+        } else {
+          snapBackCard();
+        }
+      } else {
+        snapBackCard();
+      }
+      hasMoved = false;
+    });
+
+    function handleResponseFromSwipe(responseType) {
+      if (responseType === 'again') {
+        const cooldownTurns = 20;
+        reviewQueue.push({ card: currentCard, cooldown: cooldownTurns });
+        reviewQueue = shuffle(reviewQueue);
+      } else {
+        completedCount++;
+      }
+      nextCard();
+    }
+
+    function snapBackCard() {
+      flashcard.style.transform = '';
+      if (isFlipped) {
+        flashcard.classList.add('is-flipped');
+      } else {
+        flashcard.classList.remove('is-flipped');
+      }
+    }
+
+    // Keyboard shortcuts (Space to flip, Left arrow / '1' for Again, Right arrow / '2' for Good)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleFlip();
+      } else if (hasBeenRevealed && (e.code === 'Digit1' || e.code === 'ArrowLeft')) {
+        e.preventDefault();
+        handleResponse('again');
+      } else if (hasBeenRevealed && (e.code === 'Digit2' || e.code === 'ArrowRight')) {
+        e.preventDefault();
+        handleResponse('good');
+      }
+    });
+
+    // Start session on load
+    initSession();
+  </script>
+</body>
+</html>
